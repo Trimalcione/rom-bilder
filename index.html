@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Interaktive Rom-Karte</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
 <style>
     body {
         margin: 0;
@@ -16,9 +17,21 @@
         flex-direction: row;
     }
 
-    /* Desktop: Karte links, Filter rechts */
     #map {
         flex: 3;
+        position: relative;
+    }
+
+    #coords-display {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(255,255,255,0.85);
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        border: 1px solid #aaa;
+        z-index: 1000;
     }
 
     #sidebar {
@@ -29,7 +42,6 @@
         border-left: 2px solid #ccc;
     }
 
-    /* Mobile: Karte oben, Filter unten */
     @media (max-width: 768px) {
         body {
             flex-direction: column;
@@ -60,28 +72,25 @@
         color: #666;
         margin-bottom: 6px;
     }
-
-    .symbol-select {
-        margin-bottom: 10px;
-    }
 </style>
 </head>
+
 <body>
 
-<div id="map"></div>
+<div id="map">
+    <div id="coords-display">Koordinaten: –</div>
+</div>
 
 <div id="sidebar">
     <h3>Filter</h3>
 
-    <div class="symbol-select">
-        <label><input type="checkbox" class="filter-symbol" value="tempel" checked> Tempel</label><br>
-        <label><input type="checkbox" class="filter-symbol" value="thermen" checked> Thermen</label><br>
-        <label><input type="checkbox" class="filter-symbol" value="strassen" checked> Straßen</label><br>
-        <label><input type="checkbox" class="filter-symbol" value="foren" checked> Foren</label><br>
-        <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
-        <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
-        <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
-    </div>
+    <label><input type="checkbox" class="filter-symbol" value="tempel" checked> Tempel</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="thermen" checked> Thermen</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="strassen" checked> Straßen</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="foren" checked> Foren</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
 
     <h4>Zeitauswahl</h4>
     <select id="time-filter">
@@ -94,43 +103,57 @@
         <option value="jahrzehnt80">80er Jahre n. Chr.</option>
         <option value="jahrzehnt120">120er Jahre n. Chr.</option>
     </select>
+
+    <h4>Admin</h4>
+    <label>
+        <input type="checkbox" id="admin-mode">
+        Admin-Modus aktivieren
+    </label>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// 7+ Symbol-Icons (Platzhalter-URLs, später ersetzbar)
+
+// ------------------------------------------------------------
+// 1. Karte initialisieren
+// ------------------------------------------------------------
+const map = L.map('map').setView([41.8933, 12.4829], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
+
+// ------------------------------------------------------------
+// 2. Koordinatenanzeige
+// ------------------------------------------------------------
+const coordsDisplay = document.getElementById('coords-display');
+
+map.on('mousemove', function(e) {
+    coordsDisplay.textContent =
+        `Koordinaten: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+});
+
+map.on('click', function(e) {
+    coordsDisplay.textContent =
+        `Koordinaten: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+});
+
+// ------------------------------------------------------------
+// 3. Icons
+// ------------------------------------------------------------
 const icons = {
-    tempel: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176298.png',
-        iconSize: [32, 32]
-    }),
-    thermen: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854878.png',
-        iconSize: [32, 32]
-    }),
-    strassen: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-        iconSize: [32, 32]
-    }),
-    foren: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176298.png',
-        iconSize: [32, 32]
-    }),
-    kaiserzeit: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998592.png',
-        iconSize: [32, 32]
-    }),
-    republik: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998584.png',
-        iconSize: [32, 32]
-    }),
-    sonstiges: L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
-        iconSize: [32, 32]
-    })
+    tempel: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176298.png', iconSize: [32,32] }),
+    thermen: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854878.png', iconSize: [32,32] }),
+    strassen: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png', iconSize: [32,32] }),
+    foren: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176298.png', iconSize: [32,32] }),
+    kaiserzeit: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998592.png', iconSize: [32,32] }),
+    republik: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998584.png', iconSize: [32,32] }),
+    sonstiges: L.icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png', iconSize: [32,32] })
 };
 
-// Beispiel-Datenpunkte Rom
+// ------------------------------------------------------------
+// 4. Beispielpunkte
+// ------------------------------------------------------------
 const points = [
     {
         coords: [41.8902, 12.4922],
@@ -176,9 +199,20 @@ const points = [
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rome_Thermae.jpg/320px-Rome_Thermae.jpg",
         symbol: "thermen",
         time: "jahrhundert0"
+    }, 
+	{
+        coords: [41.89508, 12.47675],
+        title: "Katzenasyl Torre Argentina",
+        date: "2026 n. Chr.",
+        text: "Unsere Katzis  <br><a href='https://www.gattidiroma.net/web/it' target='_blank'>Mehr Infos</a>",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
+        symbol: "kaiserzeit",
+        time: "jahrhunder20"
     },
+
+
     {
-        coords: [41.8899, 12.4768],
+        coords: [41.8922, 12.4790],
         title: "Theater des Marcellus",
         date: "13 v. Chr.",
         text: "Theaterbau aus der späten Republik / frühen Kaiserzeit, später in Wohnbebauung integriert.",
@@ -186,7 +220,8 @@ const points = [
         symbol: "republik",
         time: "jahrhundert-1"
     },
-    {
+    
+        {
         coords: [41.8986, 12.4768],
         title: "Engelsburg (Mausoleum des Hadrian)",
         date: "139 n. Chr.",
@@ -195,18 +230,14 @@ const points = [
         symbol: "sonstiges",
         time: "jahrhundert2"
     }
+    
 ];
 
-// Karte initialisieren
-const map = L.map('map').setView([41.8933, 12.4829], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-}).addTo(map);
-
+// ------------------------------------------------------------
+// 5. Marker erzeugen
+// ------------------------------------------------------------
 let markers = [];
 
-// Marker erzeugen
 points.forEach(p => {
     const marker = L.marker(p.coords, { icon: icons[p.symbol] });
 
@@ -225,9 +256,13 @@ points.forEach(p => {
     markers.push({ marker, symbol: p.symbol, time: p.time });
 });
 
-// Filter anwenden
+// ------------------------------------------------------------
+// 6. Filterfunktion
+// ------------------------------------------------------------
 function applyFilters() {
-    const activeSymbols = [...document.querySelectorAll('.filter-symbol:checked')].map(cb => cb.value);
+    const activeSymbols = [...document.querySelectorAll('.filter-symbol:checked')]
+        .map(cb => cb.value);
+
     const timeFilter = document.getElementById('time-filter').value;
 
     markers.forEach(obj => {
@@ -242,10 +277,45 @@ function applyFilters() {
     });
 }
 
-document.querySelectorAll('.filter-symbol').forEach(cb =>
-    cb.addEventListener('change', applyFilters)
-);
-document.getElementById('time-filter').addEventListener('change', applyFilters);
+// Event-Listener
+document.querySelectorAll('.filter-symbol')
+    .forEach(cb => cb.addEventListener('change', applyFilters));
+
+document.getElementById('time-filter')
+    .addEventListener('change', applyFilters);
+
+// ------------------------------------------------------------
+// 7. Admin-Modus: Marker setzen
+// ------------------------------------------------------------
+const adminToggle = document.getElementById('admin-mode');
+
+map.on('click', function(e) {
+    if (!adminToggle.checked) return;
+
+    const lat = e.latlng.lat.toFixed(5);
+    const lng = e.latlng.lng.toFixed(5);
+
+    const example = `
+{
+    coords: [${lat}, ${lng}],
+    title: "NEUER TITEL",
+    date: "DATUM / JAHR",
+    text: "Freitext. <a href='#' target='_blank'>Link</a>",
+    img: "BILD-URL",
+    symbol: "tempel",
+    time: "jahrhundert1"
+}
+    `.trim();
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(
+            "<b>Neuer Marker gesetzt</b><br><br>" +
+            "Kopiere diesen Block:<br><br>" +
+            `<textarea style='width:100%;height:180px;'>${example}</textarea>`
+        )
+        .openPopup();
+});
+
 </script>
 </body>
 </html>
