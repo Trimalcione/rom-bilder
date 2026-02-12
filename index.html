@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Interaktive Rom-Karte</title>
 
-  <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -31,7 +30,7 @@
     /* Karte */
     #map {
       flex: 1;
-      height: 100vh;
+      min-height: 100vh; /* wichtig: immer sichtbar */
     }
 
     /* Sidebar */
@@ -68,7 +67,6 @@
       line-height: 1.5;
     }
 
-    /* Filter Buttons */
     .filter-group {
       display: flex;
       flex-wrap: wrap;
@@ -95,7 +93,6 @@
       border-color: #2563eb;
     }
 
-    /* Hauptbutton */
     .btn-main {
       padding: 10px 14px;
       border-radius: 8px;
@@ -112,7 +109,6 @@
       background: #1e4fc7;
     }
 
-    /* Tooltip / Infobox */
     .info-box {
       width: 240px;
       background: #ffffff;
@@ -161,7 +157,7 @@
       padding: 0;
     }
 
-    /* --- Mobile Optimierung --- */
+    /* Mobile */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -169,7 +165,7 @@
       }
 
       #map {
-        height: 60vh;
+        min-height: 60vh;
         width: 100%;
       }
 
@@ -220,11 +216,9 @@
     <button class="btn-main" id="show-all">Alles anzeigen</button>
   </aside>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <script>
-    /* Beispiel-Daten */
     const places = [
       {
         id: 1,
@@ -264,14 +258,17 @@
       }
     ];
 
-    /* Karte */
     const map = L.map('map').setView([41.8933, 12.4829], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(map);
 
-    /* Icons */
+    // wichtig bei Layout-Änderungen:
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+
     function createStarIcon() {
       const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
@@ -298,7 +295,6 @@
       default: createStarIcon()
     };
 
-    /* Marker */
     const markers = [];
 
     places.forEach(p => {
@@ -323,7 +319,6 @@
       markers.push({ marker, data: p });
     });
 
-    /* Filter */
     let activeTime = null;
     let activeCat = null;
 
@@ -350,7 +345,6 @@
       markers.forEach(obj => obj.marker.addTo(map));
     }
 
-    /* Filter-Buttons erzeugen */
     const timeFilters = document.getElementById("time-filters");
     const catFilters = document.getElementById("category-filters");
 
@@ -391,4 +385,3 @@
 
 </body>
 </html>
-
