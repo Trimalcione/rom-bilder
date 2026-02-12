@@ -1,387 +1,251 @@
 
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Interaktive Rom-Karte</title>
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin=""
-  />
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaktive Rom-Karte</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<style>
     body {
-      height: 100vh;
-      display: flex;
-      background: #f5f7fa;
-      color: #1a1a1a;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        flex-direction: row;
     }
 
-    /* Karte */
+    /* Desktop: Karte links, Filter rechts */
     #map {
-      flex: 1;
-      min-height: 100vh; /* wichtig: immer sichtbar */
+        flex: 3;
     }
 
-    /* Sidebar */
-    .sidebar {
-      width: 300px;
-      background: #ffffff;
-      border-left: 1px solid #e5e7eb;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      overflow-y: auto;
-      box-shadow: -4px 0 12px rgba(0,0,0,0.05);
+    #sidebar {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        background: #f5f5f5;
+        border-left: 2px solid #ccc;
     }
 
-    .sidebar h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .sidebar h3 {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #6b7280;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: #6b7280;
-      line-height: 1.5;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .filter-btn {
-      padding: 6px 12px;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .filter-btn:hover {
-      background: #f3f4f6;
-    }
-
-    .filter-btn.active {
-      background: #2563eb;
-      color: #fff;
-      border-color: #2563eb;
-    }
-
-    .btn-main {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: none;
-      background: #2563eb;
-      color: #fff;
-      font-size: 14px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.15s ease;
-    }
-
-    .btn-main:hover {
-      background: #1e4fc7;
+    /* Mobile: Karte oben, Filter unten */
+    @media (max-width: 768px) {
+        body {
+            flex-direction: column;
+        }
+        #map {
+            height: 50vh;
+        }
+        #sidebar {
+            height: 50vh;
+        }
     }
 
     .info-box {
-      width: 240px;
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        padding: 8px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        width: 220px;
     }
 
-    .info-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 10px;
+    .info-title {
+        font-weight: bold;
+        margin-bottom: 4px;
     }
 
-    .info-header .title {
-      font-weight: 700;
-      font-size: 14px;
-      color: #111827;
+    .info-date {
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 6px;
     }
 
-    .info-header .year {
-      font-size: 12px;
-      color: #6b7280;
-      white-space: nowrap;
+    .symbol-select {
+        margin-bottom: 10px;
     }
-
-    .info-image {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      object-fit: cover;
-      max-height: 140px;
-    }
-
-    .info-text {
-      font-size: 13px;
-      line-height: 1.5;
-      color: #374151;
-    }
-
-    .leaflet-tooltip {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-    }
-
-    /* Mobile */
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-        height: auto;
-      }
-
-      #map {
-        min-height: 60vh;
-        width: 100%;
-      }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
-        border-left: none;
-        border-top: 1px solid #e5e7eb;
-        box-shadow: none;
-        padding: 16px;
-        gap: 16px;
-      }
-
-      .info-box {
-        width: 90vw;
-        max-width: 400px;
-      }
-
-      .filter-btn {
-        padding: 10px 14px;
-        font-size: 14px;
-      }
-
-      .btn-main {
-        padding: 12px 16px;
-        font-size: 15px;
-      }
-    }
-  </style>
+</style>
 </head>
-
 <body>
 
-  <div id="map"></div>
+<div id="map"></div>
 
-  <aside class="sidebar">
-    <h2>Rom – Interaktive Karte</h2>
-    <p class="hint">
-      Bewege die Maus über die Symbole, um Infos zu sehen. Rechts kannst du nach Zeitspanne und Kategorie filtern.
-    </p>
+<div id="sidebar">
+    <h3>Filter</h3>
 
-    <h3>Zeitspannen</h3>
-    <div class="filter-group" id="time-filters"></div>
+    <div class="symbol-select">
+        <label><input type="checkbox" class="filter-symbol" value="tempel" checked> Tempel</label><br>
+        <label><input type="checkbox" class="filter-symbol" value="thermen" checked> Thermen</label><br>
+        <label><input type="checkbox" class="filter-symbol" value="strassen" checked> Straßen</label><br>
+        <label><input type="checkbox" class="filter-symbol" value="foren" checked> Foren</label><br>
+        <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
+        <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
+        <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
+    </div>
 
-    <h3>Kategorien</h3>
-    <div class="filter-group" id="category-filters"></div>
+    <h4>Zeitauswahl</h4>
+    <select id="time-filter">
+        <option value="all">Alle</option>
+        <option value="jahrhundert-1">1. Jh. v. Chr.</option>
+        <option value="jahrhundert0">1. Jh. n. Chr.</option>
+        <option value="jahrhundert1">2. Jh. n. Chr.</option>
+        <option value="jahrhundert2">3. Jh. n. Chr.</option>
+        <option value="jahrzehnt70">70er Jahre n. Chr.</option>
+        <option value="jahrzehnt80">80er Jahre n. Chr.</option>
+        <option value="jahrzehnt120">120er Jahre n. Chr.</option>
+    </select>
+</div>
 
-    <button class="btn-main" id="show-all">Alles anzeigen</button>
-  </aside>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+// 7+ Symbol-Icons (Platzhalter-URLs, später ersetzbar)
+const icons = {
+    tempel: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176298.png',
+        iconSize: [32, 32]
+    }),
+    thermen: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+        iconSize: [32, 32]
+    }),
+    strassen: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+        iconSize: [32, 32]
+    }),
+    foren: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3176/3176298.png',
+        iconSize: [32, 32]
+    }),
+    kaiserzeit: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998592.png',
+        iconSize: [32, 32]
+    }),
+    republik: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1998/1998584.png',
+        iconSize: [32, 32]
+    }),
+    sonstiges: L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
+        iconSize: [32, 32]
+    })
+};
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-  <script>
-    const places = [
-      {
-        id: 1,
-        name: "Kolosseum",
-        year: "80 n. Chr.",
-        description: "Amphitheater, eröffnet unter Kaiser Titus.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
-        category: "Antike",
-        timeSpan: "0–500",
-        lat: 41.8902,
-        lng: 12.4922,
-        symbol: "tempel"
-      },
-      {
-        id: 2,
-        name: "Pantheon",
-        year: "ca. 125 n. Chr.",
-        description: "Ehemaliger Tempel, später Kirche.",
-        image: "https://raw.githubusercontent.com/Trimalcione/rom-bilder/main/20220719_125047.jpg",
-        category: "Antike",
-        timeSpan: "0–500",
-        lat: 41.8986,
-        lng: 12.4768,
-        symbol: "tempel"
-      },
-      {
-        id: 3,
-        name: "Petersdom",
-        year: "16.–17. Jh.",
-        description: "Zentrum des Vatikans.",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Basilica_di_San_Pietro_in_Vaticano_September_2015-1a.jpg/320px-Basilica_di_San_Pietro_in_Vaticano_September_2015-1a.jpg",
-        category: "Kirche",
-        timeSpan: "1500–1900",
-        lat: 41.9022,
-        lng: 12.4539,
-        symbol: "kirche"
-      }
-    ];
-
-    const map = L.map('map').setView([41.8933, 12.4829], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(map);
-
-    // wichtig bei Layout-Änderungen:
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 200);
-
-    function createStarIcon() {
-      const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
-          <polygon 
-            points="16,3 20,12 30,12 22,18 25,28 16,22 7,28 10,18 2,12 12,12"
-            fill="#f1c40f"
-            stroke="black"
-            stroke-width="2"
-          />
-        </svg>
-      `;
-      return L.icon({
-        iconUrl: "data:image/svg+xml;base64," + btoa(svg),
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
-      });
+// Beispiel-Datenpunkte Rom
+const points = [
+    {
+        coords: [41.8902, 12.4922],
+        title: "Kolosseum",
+        date: "80 n. Chr.",
+        text: "Das größte Amphitheater der Antike. <br><a href='https://de.wikipedia.org/wiki/Kolosseum' target='_blank'>Mehr Infos</a>",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
+        symbol: "kaiserzeit",
+        time: "jahrzehnt80"
+    },
+    {
+        coords: [41.8925, 12.4853],
+        title: "Forum Romanum",
+        date: "1. Jh. v. Chr.",
+        text: "Politisches Zentrum der römischen Republik. <br><a href='https://de.wikipedia.org/wiki/Forum_Romanum' target='_blank'>Ausführliche Beschreibung</a>",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Forum_Romanum_Rome_Italy.jpg/320px-Forum_Romanum_Rome_Italy.jpg",
+        symbol: "foren",
+        time: "jahrhundert-1"
+    },
+    {
+        coords: [41.9031, 12.4958],
+        title: "Pantheon",
+        date: "125 n. Chr.",
+        text: "Tempel für alle Götter. <br><a href='https://de.wikipedia.org/wiki/Pantheon_(Rom)' target='_blank'>Mehr Infos</a>",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Pantheon_Rome_2020.jpg/320px-Pantheon_Rome_2020.jpg",
+        symbol: "tempel",
+        time: "jahrzehnt120"
+    },
+    {
+        coords: [41.9009, 12.4833],
+        title: "Via del Corso (antike Via Lata)",
+        date: "römische Kaiserzeit",
+        text: "Wichtige Nord-Süd-Achse durch Rom, auf antiker Trasse. Freitext-Beispiel mit Hinweis auf Stadtentwicklung.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Via_del_Corso_Rome.jpg/320px-Via_del_Corso_Rome.jpg",
+        symbol: "strassen",
+        time: "jahrhundert1"
+    },
+    {
+        coords: [41.9010, 12.4963],
+        title: "Thermen des Nero (vermutete Lage)",
+        date: "1. Jh. n. Chr.",
+        text: "Frühe kaiserzeitliche Thermenanlage, heute überbaut. <br><a href='https://de.wikipedia.org/wiki/Nerothermen' target='_blank'>Hypothetische Rekonstruktionen</a>",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rome_Thermae.jpg/320px-Rome_Thermae.jpg",
+        symbol: "thermen",
+        time: "jahrhundert0"
+    },
+    {
+        coords: [41.8899, 12.4768],
+        title: "Theater des Marcellus",
+        date: "13 v. Chr.",
+        text: "Theaterbau aus der späten Republik / frühen Kaiserzeit, später in Wohnbebauung integriert.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Teatro_di_Marcello_Roma.jpg/320px-Teatro_di_Marcello_Roma.jpg",
+        symbol: "republik",
+        time: "jahrhundert-1"
+    },
+    {
+        coords: [41.8986, 12.4768],
+        title: "Engelsburg (Mausoleum des Hadrian)",
+        date: "139 n. Chr.",
+        text: "Mausoleum, später Festung und Papstresidenz. <br><a href='https://de.wikipedia.org/wiki/Engelsburg_(Rom)' target='_blank'>Mehr Infos</a>",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "sonstiges",
+        time: "jahrhundert2"
     }
+];
 
-    const iconBySymbol = {
-      tempel: createStarIcon(),
-      kirche: createStarIcon(),
-      platz: createStarIcon(),
-      moderne: createStarIcon(),
-      default: createStarIcon()
-    };
+// Karte initialisieren
+const map = L.map('map').setView([41.8933, 12.4829], 13);
 
-    const markers = [];
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
 
-    places.forEach(p => {
-      const icon = iconBySymbol[p.symbol] || iconBySymbol.default;
+let markers = [];
 
-      const marker = L.marker([p.lat, p.lng], { icon });
+// Marker erzeugen
+points.forEach(p => {
+    const marker = L.marker(p.coords, { icon: icons[p.symbol] });
 
-      const html = `
+    const box = `
         <div class="info-box">
-          <div class="info-header">
-            <span class="title">${p.name}</span>
-            <span class="year">${p.year}</span>
-          </div>
-          <img src="${p.image}" class="info-image">
-          <div class="info-text">${p.description}</div>
+            <div class="info-title">${p.title}</div>
+            <div class="info-date">${p.date}</div>
+            <img src="${p.img}" width="200"><br>
+            ${p.text}
         </div>
-      `;
+    `;
 
-      marker.bindTooltip(html, { direction: "top", offset: [0, -18], opacity: 1, sticky: true });
-      marker.addTo(map);
+    marker.bindPopup(box);
+    marker.addTo(map);
 
-      markers.push({ marker, data: p });
+    markers.push({ marker, symbol: p.symbol, time: p.time });
+});
+
+// Filter anwenden
+function applyFilters() {
+    const activeSymbols = [...document.querySelectorAll('.filter-symbol:checked')].map(cb => cb.value);
+    const timeFilter = document.getElementById('time-filter').value;
+
+    markers.forEach(obj => {
+        const visibleSymbol = activeSymbols.includes(obj.symbol);
+        const visibleTime = (timeFilter === "all" || obj.time === timeFilter);
+
+        if (visibleSymbol && visibleTime) {
+            if (!map.hasLayer(obj.marker)) obj.marker.addTo(map);
+        } else {
+            if (map.hasLayer(obj.marker)) map.removeLayer(obj.marker);
+        }
     });
+}
 
-    let activeTime = null;
-    let activeCat = null;
-
-    function applyFilters() {
-      markers.forEach(obj => {
-        const m = obj.marker;
-        const d = obj.data;
-
-        const matchTime = !activeTime || d.timeSpan === activeTime;
-        const matchCat = !activeCat || d.category === activeCat;
-
-        if (matchTime && matchCat) {
-          if (!map.hasLayer(m)) m.addTo(map);
-        } else {
-          if (map.hasLayer(m)) map.removeLayer(m);
-        }
-      });
-    }
-
-    function resetFilters() {
-      activeTime = null;
-      activeCat = null;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      markers.forEach(obj => obj.marker.addTo(map));
-    }
-
-    const timeFilters = document.getElementById("time-filters");
-    const catFilters = document.getElementById("category-filters");
-
-    const times = [...new Set(places.map(p => p.timeSpan))];
-    const cats = [...new Set(places.map(p => p.category))];
-
-    function makeButton(label, type) {
-      const btn = document.createElement("button");
-      btn.className = "filter-btn";
-      btn.textContent = label;
-
-      btn.onclick = () => {
-        const active = btn.classList.contains("active");
-
-        const selector = type === "time" ? "#time-filters .filter-btn" : "#category-filters .filter-btn";
-        document.querySelectorAll(selector).forEach(b => b.classList.remove("active"));
-
-        if (active) {
-          if (type === "time") activeTime = null;
-          if (type === "category") activeCat = null;
-        } else {
-          btn.classList.add("active");
-          if (type === "time") activeTime = label;
-          if (type === "category") activeCat = label;
-        }
-
-        applyFilters();
-      };
-
-      return btn;
-    }
-
-    times.forEach(t => timeFilters.appendChild(makeButton(t, "time")));
-    cats.forEach(c => catFilters.appendChild(makeButton(c, "category")));
-
-    document.getElementById("show-all").onclick = resetFilters;
-  </script>
-
+document.querySelectorAll('.filter-symbol').forEach(cb =>
+    cb.addEventListener('change', applyFilters)
+);
+document.getElementById('time-filter').addEventListener('change', applyFilters);
+</script>
 </body>
 </html>
