@@ -117,17 +117,11 @@
 // ------------------------------------------------------------
 // 1. Karte initialisieren
 // ------------------------------------------------------------
-const map = L.map('map');
-
-map.fitBounds([
-    [41.9400, 12.4300],
-    [41.8600, 12.5800]
-]);
+const map = L.map('map').setView([41.9000, 12.5000], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
 }).addTo(map);
-
 
 // ------------------------------------------------------------
 // 2. Koordinatenanzeige
@@ -325,3 +319,4 @@ map.on('click', function(e) {
 </script>
 </body>
 </html>
+
