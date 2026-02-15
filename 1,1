@@ -1,0 +1,114 @@
+ml
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaktive Rom-Karte</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        flex-direction: row;
+    }
+
+    #map {
+        flex: 3;
+        position: relative;
+    }
+
+    #coords-display {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(255,255,255,0.85);
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        border: 1px solid #aaa;
+        z-index: 1000;
+    }
+
+    #sidebar {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        background: #f5f5f5;
+        border-left: 2px solid #ccc;
+    }
+
+    .info-box {
+        padding: 8px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        width: 240px;
+    }
+
+    .marker-icon img {
+        width: 32px;
+        height: 32px;
+        transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .marker-icon img:hover {
+        transform: scale(1.35);
+        filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+    }
+
+    .leaflet-tooltip.hover-popup {
+        background: white;
+        border: 1px solid #aaa;
+        border-radius: 6px;
+        padding: 4px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+</style>
+</head>
+
+<body>
+
+<div id="map">
+    <div id="coords-display">Koordinaten: –</div>
+</div>
+
+<div id="sidebar">
+    <h3>Filter</h3>
+
+    <label><input type="checkbox" class="filter-symbol" value="tempel" checked> Tempel</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="thermen" checked> Thermen</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="strassen" checked> Straßen</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="foren" checked> Foren</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
+
+    <h4>Zeitauswahl</h4>
+    <select id="time-filter"></select>
+
+    <h4>Zeitleiste</h4>
+    <input type="range" id="time-slider" min="" max="" value="" step="1" style="width:100%;">
+    <div id="slider-label"></div>
+
+    <h4>Admin</h4>
+    <label>
+        <input type="checkbox" id="admin-mode">
+        Admin-Modus aktivieren
+    </label>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Daten -->
+<script src="points.js"></script>
+
+<!-- Marker-Logik -->
+<script src="markers.js"></script>
+
+</body>
+</html>
