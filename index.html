@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Version 4 mit Coords</title>
+<title>Interaktive Rom-Karte — Version 5</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -86,6 +87,10 @@
     <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
     <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
     <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
+
+    <h4>Mittelalter</h4>
+    <label><input type="checkbox" class="filter-symbol" value="guelfen" checked> Guelfen</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="ghibellinen" checked> Ghibellinen</label><br>
 
     <h4>Zeitauswahl</h4>
     <select id="time-filter"></select>
@@ -399,9 +404,8 @@ const popes = [
   { name: "Johannes Paul II.", start: 1978, end: 2005 },
   { name: "Franziskus", start: 2013, end: 2025 }, 
   { name: "Leo XIV.", start: 2025, end: new Date().getFullYear() }];
-
 // ------------------------------------------------------------
-// 5. Icons
+// 5. Icons (inkl. Guelfen & Ghibellinen)
 // ------------------------------------------------------------
 function makeIcon(url) {
     return L.divIcon({
@@ -413,19 +417,22 @@ function makeIcon(url) {
 }
 
 const icons = {
-    tempel: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
+      tempel: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
     thermen: makeIcon('https://cdn-icons-png.flaticon.com/512/854/854878.png'),
     strassen: makeIcon('https://cdn-icons-png.flaticon.com/512/684/684908.png'),
     foren: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
     kaiserzeit: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998592.png'),
     republik: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998584.png'),
-    sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png')
+    sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png'),
+
+    // Neue Symbole
+    guelfen: makeIcon('https://openmoji.org/data/color/svg/1F981.svg'),       // Löwe
+    ghibellinen: makeIcon('https://openmoji.org/data/color/svg/1F985.svg')   // Adler
 };
 
 // ------------------------------------------------------------
-// 6. Marker-Daten (Version 1.0)
+// 6. Antike Punkte
 // ------------------------------------------------------------
-
 const points = [
     {
         coords: [41.89021, 12.49223],
@@ -444,8 +451,8 @@ const points = [
         startValue: -700,
         endValue: -401,
         text: "Politisches Zentrum der frühen römischen Geschichte.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Forum_Romanum_Rome_Italy.jpg/320px-Forum_Romanum_Rome_Italy.jpg",
-        symbol: "foren"
+         img: "https://upload.wikimedia.org/wikipedia/commons/6/66/ForumRomana1.jpg",
+         symbol: "foren"
     },
     {
         coords: [41.89861, 12.47687],
@@ -454,29 +461,20 @@ const points = [
         startValue: yearToDecimal(125),
         endValue: new Date().getFullYear(),
         text: "Tempel für alle Götter.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Pantheon_Rome_2020.jpg/320px-Pantheon_Rome_2020.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/2024_Pantheon_Rome_04_2024_1318.jpg/960px-2024_Pantheon_Rome_04_2024_1318.jpg?20240605004451",
         symbol: "tempel"
     },
     {
-        coords: [41.90078, 12.48046],
+        coords: [41.90278, 12.48062],
         title: "Via del Corso",
         date: "1.–3. Jh. n. Chr.",
         startValue: 0,
         endValue: 300,
         text: "Wichtige Nord-Süd-Achse durch Rom.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Via_del_Corso_Rome.jpg/320px-Via_del_Corso_Rome.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Via_del_Corso_(52501354470).jpg/330px-Via_del_Corso_(52501354470).jpg",
         symbol: "strassen"
     },
-    {
-        coords: [41.90303, 12.47690],
-        title: "Thermen des Nero",
-        date: "1. Jh. n. Chr.",
-        startValue: 0,
-        endValue: 100,
-        text: "Frühe kaiserzeitliche Thermenanlage.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rome_Thermae.jpg/320px-Rome_Thermae.jpg",
-        symbol: "thermen"
-    },
+
     {
         coords: [41.89553, 12.47685],
         title: "Katzenasyl Torre Argentina",
@@ -484,7 +482,7 @@ const points = [
         startValue: yearToDecimal(1980),
         endValue: new Date().getFullYear(),
         text: "Unsere Katzis.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
+        img: "https://raw.githubusercontent.com/Trimalcione/rom-bilder/refs/heads/main/argentina.jpg",
         symbol: "kaiserzeit"
     },
     {
@@ -494,7 +492,7 @@ const points = [
         startValue: yearToDecimal(-13),
         endValue: new Date().getFullYear(),
         text: "Theaterbau aus der späten Republik.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Teatro_di_Marcello_Roma.jpg/320px-Teatro_di_Marcello_Roma.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Teatro_di_Marcello_intero.jpg/120px-Teatro_di_Marcello_intero.jpg",
         symbol: "republik"
     },
     {
@@ -508,8 +506,78 @@ const points = [
         symbol: "sonstiges"
     }
 ];
+
 // ------------------------------------------------------------
-// 7. Marker erzeugen
+// 7. Guelfen & Ghibellinen
+// ------------------------------------------------------------
+const guelfGhibPoints = [
+    {
+        coords: [41.88591, 12.50533],
+        title: "Lateran (Guelfen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Der Lateran war das wichtigste Zentrum der guelfischen, papsttreuen Macht.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Lateran_Basilica.jpg/320px-Lateran_Basilica.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.89396, 12.48287],
+        title: "Santa Maria in Aracoeli (Guelfen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Kirche und Machtzentrum der guelfischen Familien.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Santa_Maria_in_Aracoeli.jpg/320px-Santa_Maria_in_Aracoeli.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.91093, 12.47682],
+        title: "Piazza del Popolo (Guelfen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Guelfische Kontrolle über die nördlichen Stadttore.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Piazza_del_Popolo_Rome.jpg/320px-Piazza_del_Popolo_Rome.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.89250, 12.48231],
+        title: "Campidoglio (Ghibellinen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Sitz des römischen Senats – oft ghibellinisch dominiert.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Campidoglio_Rome.jpg/320px-Campidoglio_Rome.jpg",
+        symbol: "ghibellinen"
+    },
+    {
+        coords: [41.90311, 12.46630],
+        title: "Castel Sant’Angelo (Ghibellinen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Kaiserliche Garnison und strategischer Stützpunkt der Ghibellinen.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "ghibellinen"
+    },
+    {
+        coords: [41.89536, 12.48841],
+        title: "Torre delle Milizie (Ghibellinen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Der berühmte 'Schiefe Turm Roms', Sitz der ghibellinischen Frangipani.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Mercati_di_traiano%2C_torre_delle_milizie.JPG/640px-Mercati_di_traiano%2C_torre_delle_milizie.JPG",
+        symbol: "ghibellinen"
+    }
+];
+
+// Guelfen & Ghibellinen hinzufügen
+guelfGhibPoints.forEach(p => points.push(p));
+
+// ------------------------------------------------------------
+// 8. Marker erzeugen
 // ------------------------------------------------------------
 let markers = [];
 
@@ -552,7 +620,7 @@ points.forEach(p => {
 });
 
 // ------------------------------------------------------------
-// 8. Papst-Dropdown
+// 9. Papst-Dropdown
 // ------------------------------------------------------------
 function buildTimeDropdown() {
     const select = document.getElementById("time-filter");
@@ -579,7 +647,7 @@ function buildTimeDropdown() {
 buildTimeDropdown();
 
 // ------------------------------------------------------------
-// 9. Slider
+// 10. Slider
 // ------------------------------------------------------------
 function initSlider() {
     const slider = document.getElementById("time-slider");
@@ -624,7 +692,7 @@ document.getElementById("time-slider")
     .addEventListener("input", applySlider);
 
 // ------------------------------------------------------------
-// 10. Admin-Modus
+// 11. Admin-Modus
 // ------------------------------------------------------------
 const adminToggle = document.getElementById('admin-mode');
 
@@ -657,5 +725,3 @@ map.on('click', function(e) {
 </script>
 </body>
 </html>
-
-
