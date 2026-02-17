@@ -1,11 +1,11 @@
-
+tml
 
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Version 1.1b/title>
+<title>Interaktive Rom-Karte</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -42,6 +42,18 @@
         border-left: 2px solid #ccc;
     }
 
+    @media (max-width: 768px) {
+        body {
+            flex-direction: column;
+        }
+        #map {
+            height: 50vh;
+        }
+        #sidebar {
+            height: 50vh;
+        }
+    }
+
     .info-box {
         padding: 8px;
         background: white;
@@ -50,10 +62,32 @@
         width: 240px;
     }
 
+    .info-title {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .info-date {
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 6px;
+    }
+
+    /* Marker-Container (divIcon) */
+    .marker-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .marker-icon img {
         width: 32px;
         height: 32px;
         transition: transform 0.2s ease, filter 0.2s ease;
+        transform-origin: center center;
+        display: block;
     }
 
     .marker-icon img:hover {
@@ -61,6 +95,7 @@
         filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
     }
 
+    /* Hover-Bild */
     .leaflet-tooltip.hover-popup {
         background: white;
         border: 1px solid #aaa;
@@ -87,6 +122,9 @@
     <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
     <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
     <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="guelfen" checked> Guelfen</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="ghibellinen" checked> Ghibellinen</label><br>
+
 
     <h4>Zeitauswahl</h4>
     <select id="time-filter"></select>
@@ -102,10 +140,12 @@
     </label>
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> 
+<script src="points.js"></script> 
+<!-- NEU --> <script> // dein gesamtes Hauptscript (Marker, Slider, Admin, etc.) </script>
+
 // ------------------------------------------------------------
-// 1. Karte
+// 1. Karte initialisieren
 // ------------------------------------------------------------
 const map = L.map('map').setView([41.8933, 12.4829], 15);
 
@@ -123,6 +163,11 @@ map.on('mousemove', e => {
         `Koordinaten: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
 });
 
+map.on('click', e => {
+    coordsDisplay.textContent =
+        `Koordinaten: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+});
+
 // ------------------------------------------------------------
 // 3. Zeitfunktion
 // ------------------------------------------------------------
@@ -131,278 +176,18 @@ function yearToDecimal(year, month = 1, day = 1) {
 }
 
 // ------------------------------------------------------------
-// 4. Papstliste (korrigiert)
+// 4. Papstliste
 // ------------------------------------------------------------
 const popes = [
   { name: "Petrus", start: 30, end: 64 },
   { name: "Linus", start: 64, end: 76 },
-  { name: "Anaklet (Cletus)", start: 76, end: 88 },
-  { name: "Clemens I.", start: 88, end: 97 },
-  { name: "Evaristus", start: 97, end: 105 },
-  { name: "Alexander I.", start: 105, end: 115 },
-  { name: "Sixtus I.", start: 115, end: 125 },
-  { name: "Telesphorus", start: 125, end: 136 },
-  { name: "Hyginus", start: 136, end: 140 },
-  { name: "Pius I.", start: 140, end: 155 },
-  { name: "Anicetus", start: 155, end: 166 },
-  { name: "Soter", start: 166, end: 175 },
-  { name: "Eleutherius", start: 175, end: 189 },
-  { name: "Victor I.", start: 189, end: 199 },
-  { name: "Zephyrinus", start: 199, end: 217 },
-  { name: "Callistus I.", start: 217, end: 222 },
-  { name: "Urban I.", start: 222, end: 230 },
-  { name: "Pontianus", start: 230, end: 235 },
-  { name: "Anterus", start: 235, end: 236 },
-  { name: "Fabianus", start: 236, end: 250 },
-  { name: "Cornelius", start: 251, end: 253 },
-  { name: "Lucius I.", start: 253, end: 254 },
-  { name: "Stephan I.", start: 254, end: 257 },
-  { name: "Sixtus II.", start: 257, end: 258 },
-  { name: "Dionysius", start: 260, end: 268 },
-  { name: "Felix I.", start: 269, end: 274 },
-  { name: "Eutychianus", start: 275, end: 283 },
-  { name: "Caius", start: 283, end: 296 },
-  { name: "Marcellinus", start: 296, end: 304 },
-  { name: "Marcellus I.", start: 308, end: 309 },
-  { name: "Eusebius", start: 309, end: 309 },
-  { name: "Miltiades", start: 311, end: 314 },
-  { name: "Silvester I.", start: 314, end: 335 },
-  { name: "Marcus", start: 336, end: 336 },
-  { name: "Julius I.", start: 337, end: 352 },
-  { name: "Liberius", start: 352, end: 366 },
-  { name: "Damasus I.", start: 366, end: 384 },
-  { name: "Siricius", start: 384, end: 399 },
-  { name: "Anastasius I.", start: 399, end: 401 },
-  { name: "Innozenz I.", start: 401, end: 417 },
-  { name: "Zosimus", start: 417, end: 418 },
-  { name: "Bonifatius I.", start: 418, end: 422 },
-  { name: "Coelestin I.", start: 422, end: 432 },
-  { name: "Sixtus III.", start: 432, end: 440 },
-  { name: "Leo I. (der Große)", start: 440, end: 461 },
-  { name: "Hilarius", start: 461, end: 468 },
-  { name: "Simplicius", start: 468, end: 483 },
-  { name: "Felix III.", start: 483, end: 492 },
-  { name: "Gelasius I.", start: 492, end: 496 },
-  { name: "Anastasius II.", start: 496, end: 498 },
-  { name: "Symmachus", start: 498, end: 514 },
-  { name: "Hormisdas", start: 514, end: 523 },
-  { name: "Johannes I.", start: 523, end: 526 },
-  { name: "Felix IV.", start: 526, end: 530 },
-  { name: "Bonifatius II.", start: 530, end: 532 },
-  { name: "Johannes II.", start: 533, end: 535 },
-  { name: "Agapitus I.", start: 535, end: 536 },
-  { name: "Silverius", start: 536, end: 537 },
-  { name: "Vigilius", start: 537, end: 555 },
-  { name: "Pelagius I.", start: 556, end: 561 },
-  { name: "Johannes III.", start: 561, end: 574 },
-  { name: "Benedikt I.", start: 575, end: 579 },
-  { name: "Pelagius II.", start: 579, end: 590 },
-  { name: "Gregor I. (der Große)", start: 590, end: 604 },
-  { name: "Sabinian", start: 604, end: 606 },
-  { name: "Bonifatius III.", start: 607, end: 607 },
-  { name: "Bonifatius IV.", start: 608, end: 615 },
-  { name: "Deusdedit", start: 615, end: 618 },
-  { name: "Bonifatius V.", start: 619, end: 625 },
-  { name: "Honorius I.", start: 625, end: 638 },
-  { name: "Severinus", start: 640, end: 640 },
-  { name: "Johannes IV.", start: 640, end: 642 },
-  { name: "Theodor I.", start: 642, end: 649 },
-  { name: "Martin I.", start: 649, end: 655 },
-  { name: "Eugen I.", start: 654, end: 657 },
-  { name: "Vitalian", start: 657, end: 672 },
-  { name: "Adeodatus II.", start: 672, end: 676 },
-  { name: "Donus", start: 676, end: 678 },
-  { name: "Agatho", start: 678, end: 681 },
-  { name: "Leo II.", start: 682, end: 683 },
-  { name: "Benedikt II.", start: 684, end: 685 },
-  { name: "Johannes V.", start: 685, end: 686 },
-  { name: "Konon", start: 686, end: 687 },
-  { name: "Sergius I.", start: 687, end: 701 },
-  { name: "Johannes VI.", start: 701, end: 705 },
-  { name: "Johannes VII.", start: 705, end: 707 },
-  { name: "Sisinnius", start: 708, end: 708 },
-  { name: "Konstantin", start: 708, end: 715 },
-  { name: "Gregor II.", start: 715, end: 731 },
-  { name: "Gregor III.", start: 731, end: 741 },
-  { name: "Zacharias", start: 741, end: 752 },
-  { name: "Stephan II.", start: 752, end: 757 },
-  { name: "Paul I.", start: 757, end: 767 },
-  { name: "Stephan III.", start: 768, end: 772 },
-  { name: "Hadrian I.", start: 772, end: 795 },
-  { name: "Leo III.", start: 795, end: 816 },
-  { name: "Stephan IV.", start: 816, end: 817 },
-  { name: "Paschalis I.", start: 817, end: 824 },
-  { name: "Eugen II.", start: 824, end: 827 },
-  { name: "Valentin", start: 827, end: 827 },
-  { name: "Gregor IV.", start: 827, end: 844 },
-  { name: "Sergius II.", start: 844, end: 847 },
-  { name: "Leo IV.", start: 847, end: 855 },
-  { name: "Benedikt III.", start: 855, end: 858 },
-  { name: "Nikolaus I.", start: 858, end: 867 },
-  { name: "Hadrian II.", start: 867, end: 872 },
-  { name: "Johannes VIII.", start: 872, end: 882 },
-  { name: "Marinus I.", start: 882, end: 884 },
-  { name: "Hadrian III.", start: 884, end: 885 },
-  { name: "Stephan V.", start: 885, end: 891 },
-  { name: "Formosus", start: 891, end: 896 },
-  { name: "Bonifatius VI.", start: 896, end: 896 },
-  { name: "Stephan VI.", start: 896, end: 897 },
-  { name: "Romanus", start: 897, end: 897 },
-  { name: "Theodor II.", start: 897, end: 897 },
-  { name: "Johannes IX.", start: 898, end: 900 },
-  { name: "Benedikt IV.", start: 900, end: 903 },
-  { name: "Leo V.", start: 903, end: 903 },
-  { name: "Sergius III.", start: 904, end: 911 },
-  { name: "Anastasius III.", start: 911, end: 913 },
-  { name: "Lando", start: 913, end: 914 },
-  { name: "Johannes X.", start: 914, end: 928 },
-  { name: "Leo VI.", start: 928, end: 928 },
-  { name: "Stephan VII.", start: 928, end: 931 },
-  { name: "Johannes XI.", start: 931, end: 935 },
-  { name: "Leo VII.", start: 936, end: 939 },
-  { name: "Stephan VIII.", start: 939, end: 942 },
-  { name: "Marinus II.", start: 942, end: 946 },
-  { name: "Agapitus II.", start: 946, end: 955 },
-  { name: "Johannes XII.", start: 955, end: 964 },
-  { name: "Leo VIII.", start: 963, end: 965 },
-  { name: "Benedikt V.", start: 964, end: 965 },
-  { name: "Johannes XIII.", start: 965, end: 972 },
-  { name: "Benedikt VI.", start: 973, end: 974 },
-  { name: "Benedikt VII.", start: 974, end: 983 },
-  { name: "Johannes XIV.", start: 983, end: 984 },
-  { name: "Johannes XV.", start: 985, end: 996 },
-  { name: "Gregor V.", start: 996, end: 999 },
-  { name: "Silvester II.", start: 999, end: 1003 },
-  { name: "Johannes XVII.", start: 1003, end: 1003 },
-  { name: "Johannes XVIII.", start: 1003, end: 1009 },
-  { name: "Sergius IV.", start: 1009, end: 1012 },
-  { name: "Benedikt VIII.", start: 1012, end: 1024 },
-  { name: "Johannes XIX.", start: 1024, end: 1032 },
-  { name: "Benedikt IX.", start: 1032, end: 1044 },
-  { name: "Silvester III.", start: 1045, end: 1045 },
-  { name: "Benedikt IX. (2. Amtszeit)", start: 1045, end: 1045 },
-  { name: "Gregor VI.", start: 1045, end: 1046 },
-  { name: "Klemens II.", start: 1046, end: 1047 },
-  { name: "Benedikt IX. (3. Amtszeit)", start: 1047, end: 1048 },
-  { name: "Damasus II.", start: 1048, end: 1048 },
-  { name: "Leo IX.", start: 1049, end: 1054 },
-  { name: "Viktor II.", start: 1055, end: 1057 },
-  { name: "Stephan IX.", start: 1057, end: 1058 },
-  { name: "Nikolaus II.", start: 1058, end: 1061 },
-  { name: "Alexander II.", start: 1061, end: 1073 },
-  { name: "Gregor VII.", start: 1073, end: 1085 },
-  { name: "Viktor III.", start: 1086, end: 1087 },
-  { name: "Urban II.", start: 1088, end: 1099 },
-  { name: "Paschalis II.", start: 1099, end: 1118 },
-  { name: "Gelasius II.", start: 1118, end: 1119 },
-  { name: "Kalixt II.", start: 1119, end: 1124 },
-  { name: "Honorius II.", start: 1124, end: 1130 },
-  { name: "Innozenz II.", start: 1130, end: 1143 },
-  { name: "Coelestin II.", start: 1143, end: 1144 },
-  { name: "Lucius II.", start: 1144, end: 1145 },
-  { name: "Eugen III.", start: 1145, end: 1153 },
-  { name: "Anastasius IV.", start: 1153, end: 1154 },
-  { name: "Hadrian IV.", start: 1154, end: 1159 },
-  { name: "Alexander III.", start: 1159, end: 1181 },
-  { name: "Lucius III.", start: 1181, end: 1185 },
-  { name: "Urban III.", start: 1185, end: 1187 },
-  { name: "Gregor VIII.", start: 1187, end: 1187 },
-  { name: "Clemens III.", start: 1187, end: 1191 },
-  { name: "Coelestin III.", start: 1191, end: 1198 },
-  { name: "Innozenz III.", start: 1198, end: 1216 },
-  { name: "Honorius III.", start: 1216, end: 1227 },
-  { name: "Gregor IX.", start: 1227, end: 1241 },
-  { name: "Coelestin IV.", start: 1241, end: 1241 },
-  { name: "Innozenz IV.", start: 1243, end: 1254 },
-  { name: "Alexander IV.", start: 1254, end: 1261 },
-  { name: "Urban IV.", start: 1261, end: 1264 },
-  { name: "Clemens IV.", start: 1265, end: 1268 },
-  { name: "Gregor X.", start: 1271, end: 1276 },
-  { name: "Innozenz V.", start: 1276, end: 1276 },
-  { name: "Hadrian V.", start: 1276, end: 1276 },
-  { name: "Johannes XXI.", start: 1276, end: 1277 },
-  { name: "Nikolaus III.", start: 1277, end: 1280 },
-  { name: "Martin IV.", start: 1281, end: 1285 },
-  { name: "Honorius IV.", start: 1285, end: 1287 },
-  { name: "Nikolaus IV.", start: 1288, end: 1292 },
-  { name: "Coelestin V.", start: 1294, end: 1294 },
-  { name: "Bonifatius VIII.", start: 1294, end: 1303 },
-  { name: "Benedikt XI.", start: 1303, end: 1304 },
-  { name: "Clemens V.", start: 1305, end: 1314 },
-  { name: "Johannes XXII.", start: 1316, end: 1334 },
-  { name: "Benedikt XII.", start: 1334, end: 1342 },
-  { name: "Clemens VI.", start: 1342, end: 1352 },
-  { name: "Innozenz VI.", start: 1352, end: 1362 },
-  { name: "Urban V.", start: 1362, end: 1370 },
-  { name: "Gregor XI.", start: 1370, end: 1378 },
-  { name: "Urban VI.", start: 1378, end: 1389 },
-  { name: "Bonifatius IX.", start: 1389, end: 1404 },
-  { name: "Innozenz VII.", start: 1404, end: 1406 },
-  { name: "Gregor XII.", start: 1406, end: 1415 },
-  { name: "Martin V.", start: 1417, end: 1431 },
-  { name: "Eugen IV.", start: 1431, end: 1447 },
-  { name: "Nikolaus V.", start: 1447, end: 1455 },
-  { name: "Calixt III.", start: 1455, end: 1458 },
-  { name: "Pius II.", start: 1458, end: 1464 },
-  { name: "Paul II.", start: 1464, end: 1471 },
-  { name: "Sixtus IV.", start: 1471, end: 1484 },
-  { name: "Innozenz VIII.", start: 1484, end: 1492 },
-  { name: "Alexander VI.", start: 1492, end: 1503 },
-  { name: "Pius III.", start: 1503, end: 1503 },
-  { name: "Julius II.", start: 1503, end: 1513 },
-  { name: "Leo X.", start: 1513, end: 1521 },
-  { name: "Hadrian VI.", start: 1522, end: 1523 },
-  { name: "Clemens VII.", start: 1523, end: 1534 },
-  { name: "Paul III.", start: 1534, end: 1549 },
-  { name: "Julius III.", start: 1550, end: 1555 },
-  { name: "Marcellus II.", start: 1555, end: 1555 },
-  { name: "Paul IV.", start: 1555, end: 1559 },
-  { name: "Pius IV.", start: 1559, end: 1565 },
-  { name: "Pius V.", start: 1566, end: 1572 },
-  { name: "Gregor XIII.", start: 1572, end: 1585 },
-  { name: "Sixtus V.", start: 1585, end: 1590 },
-  { name: "Urban VII.", start: 1590, end: 1590 },
-  { name: "Gregor XIV.", start: 1590, end: 1591 },
-  { name: "Innozenz IX.", start: 1591, end: 1591 },
-  { name: "Clemens VIII.", start: 1592, end: 1605 },
-  { name: "Leo XI.", start: 1605, end: 1605 },
-  { name: "Paul V.", start: 1605, end: 1621 },
-  { name: "Gregor XV.", start: 1621, end: 1623 },
-  { name: "Urban VIII.", start: 1623, end: 1644 },
-  { name: "Innozenz X.", start: 1644, end: 1655 },
-  { name: "Alexander VII.", start: 1655, end: 1667 },
-  { name: "Clemens IX.", start: 1667, end: 1669 },
-  { name: "Clemens X.", start: 1670, end: 1676 },
-  { name: "Innozenz XI.", start: 1676, end: 1689 },
-  { name: "Alexander VIII.", start: 1689, end: 1691 },
-  { name: "Innozenz XII.", start: 1691, end: 1700 },
-  { name: "Clemens XI.", start: 1700, end: 1721 },
-  { name: "Innozenz XIII.", start: 1721, end: 1724 },
-  { name: "Benedikt XIII.", start: 1724, end: 1730 },
-  { name: "Clemens XII.", start: 1730, end: 1740 },
-  { name: "Benedikt XIV.", start: 1740, end: 1758 },
-  { name: "Clemens XIII.", start: 1758, end: 1769 },
-  { name: "Clemens XIV.", start: 1769, end: 1774 },
-  { name: "Pius VI.", start: 1775, end: 1799 },
-  { name: "Pius VII.", start: 1800, end: 1823 },
-  { name: "Leo XII.", start: 1823, end: 1829 },
-  { name: "Pius VIII.", start: 1829, end: 1830 },
-  { name: "Gregor XVI.", start: 1831, end: 1846 },
-  { name: "Pius IX.", start: 1846, end: 1878 },
-  { name: "Leo XIII.", start: 1878, end: 1903 },
-  { name: "Pius X.", start: 1903, end: 1914 },
-  { name: "Benedikt XV.", start: 1914, end: 1922 },
-  { name: "Pius XI.", start: 1922, end: 1939 },
-  { name: "Pius XII.", start: 1939, end: 1958 },
-  { name: "Johannes XXIII.", start: 1958, end: 1963 },
-  { name: "Paul VI.", start: 1963, end: 1978 },
-  { name: "Johannes Paul I.", start: 1978, end: 1978 },
   { name: "Johannes Paul II.", start: 1978, end: 2005 },
   { name: "Franziskus", start: 2013, end: 2025 }, 
-  { name: "Leo XIV.", start: 2025, end: new Date().getFullYear() }];
+  { name: "Leo XIV.", start: 2025, end: new Date().getFullYear() }
+];
 
 // ------------------------------------------------------------
-// 5. Icons
+// 5. Icons als divIcon
 // ------------------------------------------------------------
 function makeIcon(url) {
     return L.divIcon({
@@ -421,12 +206,13 @@ const icons = {
     kaiserzeit: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998592.png'),
     republik: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998584.png'),
     sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png')
+    guelfen: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998584.png'),
+    ghibellinen: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png')
+
 };
 
-
-
-------------------------------------------------------------
-// 6. Marker-Daten (Version 1.0)
+// ------------------------------------------------------------
+// 6. Marker-Daten + Hover-Bild
 // ------------------------------------------------------------
 const points = [
     {
@@ -450,23 +236,23 @@ const points = [
         symbol: "foren"
     },
     {
-        coords: [41.89858, 12.47683],
+        coords: [41.9031, 12.4958],
         title: "Pantheon",
         date: "125 n. Chr. – heute",
         startValue: yearToDecimal(125),
         endValue: new Date().getFullYear(),
         text: "Tempel für alle Götter.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/0/06/Rome_Pantheon_front.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Pantheon_Rome_2020.jpg/320px-Pantheon_Rome_2020.jpg",
         symbol: "tempel"
     },
     {
-        coords: [41.90047, 12.48230],
+        coords: [41.9009, 12.4833],
         title: "Via del Corso",
         date: "1.–3. Jh. n. Chr.",
         startValue: 0,
         endValue: 300,
         text: "Wichtige Nord-Süd-Achse durch Rom.",
-        img: "https://github.com/Trimalcione/rom-bilder/blob/main/argentina.jpg?raw=true",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Via_del_Corso_Rome.jpg/320px-Via_del_Corso_Rome.jpg",
         symbol: "strassen"
     },
     {
@@ -481,12 +267,12 @@ const points = [
     },
     {
         coords: [41.89508, 12.47675],
-        title: "Katzenasyl Torre Argentina2",
+        title: "Katzenasyl Torre Argentina",
         date: "1980 – heute",
         startValue: yearToDecimal(1980),
         endValue: new Date().getFullYear(),
         text: "Unsere Katzis.",
-       img: "https://github.com/Trimalcione/rom-bilder/blob/main/argentina.jpg?raw=true",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
         symbol: "kaiserzeit"
     },
     {
@@ -500,7 +286,7 @@ const points = [
         symbol: "republik"
     },
     {
-        coords: [41.90300, 12.46656],
+        coords: [41.8986, 12.4768],
         title: "Engelsburg",
         date: "139 n. Chr. – heute",
         startValue: yearToDecimal(139),
@@ -508,17 +294,56 @@ const points = [
         text: "Mausoleum, später Festung und Papstresidenz.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
         symbol: "sonstiges"
+    },
+    {
+        coords: [41.8902, 12.4922],
+        title: "Frangipani – Kolosseum",
+        date: "11.–13. Jh.",
+        startValue: yearToDecimal(1000),
+        endValue: yearToDecimal(1300),
+        text: "Festung der ghibellinischen Familie Frangipani.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "ghibellinen"
+    },
+    {
+        coords: [41.8922, 12.4790],
+        title: "Pierleoni – Theater des Marcellus",
+        date: "11.–12. Jh.",
+        startValue: yearToDecimal(1000),
+        endValue: yearToDecimal(1200),
+        text: "Guelfische Familie, kontrollierte das Theater als Festung.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.9009, 12.4687],
+        title: "Orsini – Monte Giordano",
+        date: "12.–15. Jh.",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Hauptburg der guelfischen Orsini.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.8995, 12.4833],
+        title: "Colonna – Torre dei Colonna",
+        date: "12.–15. Jh.",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Zentrale Festung der ghibellinischen Colonna.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "ghibellinen"
     }
 ];
 
-// ------------------------------------------------------------
-// 7. Marker erzeugen
-// ------------------------------------------------------------
+
 let markers = [];
 
 points.forEach(p => {
     const marker = L.marker(p.coords, { icon: icons[p.symbol] });
 
+    // Popup beim Klick
     const box = `
         <div class="info-box">
             <div class="info-title">${p.title}</div>
@@ -527,15 +352,14 @@ points.forEach(p => {
             ${p.text}
         </div>
     `;
-
     marker.bindPopup(box);
 
+    // Hover: nur Bild
     const hoverBox = `
         <div style="pointer-events:none;">
             <img src="${p.img}" style="width:140px; border-radius:4px;">
         </div>
     `;
-
     marker.bindTooltip(hoverBox, {
         permanent: false,
         direction: "top",
@@ -555,7 +379,7 @@ points.forEach(p => {
 });
 
 // ------------------------------------------------------------
-// 8. Papst-Dropdown
+// 7. Papst-Dropdown + Zeiträume
 // ------------------------------------------------------------
 function buildTimeDropdown() {
     const select = document.getElementById("time-filter");
@@ -582,7 +406,7 @@ function buildTimeDropdown() {
 buildTimeDropdown();
 
 // ------------------------------------------------------------
-// 9. Slider
+// 8. Slider initialisieren
 // ------------------------------------------------------------
 function initSlider() {
     const slider = document.getElementById("time-slider");
@@ -596,10 +420,18 @@ function initSlider() {
 
 initSlider();
 
+// ------------------------------------------------------------
+// 9. Papstsuche für ein Jahr
+// ------------------------------------------------------------
 function getPopesForYear(year) {
-    return popes.filter(p => p.start <= year && p.end >= year).slice(0, 3);
+    return popes
+        .filter(p => p.start <= year && p.end >= year)
+        .slice(0, 3);
 }
 
+// ------------------------------------------------------------
+// 10. Slider-Funktion (Jahr + Papstname)
+// ------------------------------------------------------------
 function applySlider() {
     const year = parseFloat(document.getElementById("time-slider").value);
 
@@ -613,7 +445,9 @@ function applySlider() {
         `Jahr: ${year} — Papst: ${popeText}`;
 
     markers.forEach(obj => {
-        const visible = obj.startValue <= year && obj.endValue >= year;
+        const visible =
+            obj.startValue <= year &&
+            obj.endValue >= year;
 
         if (visible) {
             if (!map.hasLayer(obj.marker)) obj.marker.addTo(map);
@@ -627,7 +461,7 @@ document.getElementById("time-slider")
     .addEventListener("input", applySlider);
 
 // ------------------------------------------------------------
-// 10. Admin-Modus
+// 11. Admin-Modus
 // ------------------------------------------------------------
 const adminToggle = document.getElementById('admin-mode');
 
@@ -642,7 +476,7 @@ map.on('click', function(e) {
     coords: [${lat}, ${lng}],
     title: "NEUER TITEL",
     date: "DATUM / ZEITSPANNE",
-    startValue: yearToDecimal(1980),
+    startValue: yearToDecimal(1980, 1, 1),
     endValue: new Date().getFullYear(),
     text: "Freitext.",
     img: "BILD-URL",
@@ -658,64 +492,5 @@ map.on('click', function(e) {
         .openPopup();
 });
 </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
