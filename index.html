@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Version 1.2/title>
+<title>Interaktive Rom-Karte — Version 1.3/title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -423,8 +423,10 @@ const icons = {
     sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png')
 };
 
+
+
 // ------------------------------------------------------------
-// 6. Marker-Daten (Version 1.0)
+// 6. Marker-Daten (Version 1.3 – konsistent & validiert)
 // ------------------------------------------------------------
 const points = [
     {
@@ -432,7 +434,7 @@ const points = [
         title: "Kolosseum",
         date: "80 n. Chr. – heute",
         startValue: yearToDecimal(80),
-        endValue: new Date().getFullYear(),
+        endValue: yearToDecimal(new Date().getFullYear()),
         text: "Das größte Amphitheater der Antike.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
         symbol: "kaiserzeit"
@@ -441,8 +443,8 @@ const points = [
         coords: [41.8925, 12.4853],
         title: "Forum Romanum",
         date: "7.–5. Jh. v. Chr.",
-        startValue: -700,
-        endValue: -401,
+        startValue: yearToDecimal(-700),
+        endValue: yearToDecimal(-401),
         text: "Politisches Zentrum der frühen römischen Geschichte.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Forum_Romanum_Rome_Italy.jpg/320px-Forum_Romanum_Rome_Italy.jpg",
         symbol: "foren"
@@ -452,17 +454,17 @@ const points = [
         title: "Pantheon",
         date: "125 n. Chr. – heute",
         startValue: yearToDecimal(125),
-        endValue: new Date().getFullYear(),
+        endValue: yearToDecimal(new Date().getFullYear()),
         text: "Tempel für alle Götter.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/0/06/Rome_Pantheon_front.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Rome_Pantheon_front.jpg/320px-Rome_Pantheon_front.jpg",
         symbol: "tempel"
     },
     {
         coords: [41.90047, 12.48230],
         title: "Via del Corso",
         date: "1.–3. Jh. n. Chr.",
-        startValue: 0,
-        endValue: 300,
+        startValue: yearToDecimal(0),
+        endValue: yearToDecimal(300),
         text: "Wichtige Nord-Süd-Achse durch Rom.",
         img: "https://github.com/Trimalcione/rom-bilder/blob/main/argentina.jpg?raw=true",
         symbol: "strassen"
@@ -471,28 +473,28 @@ const points = [
         coords: [41.9010, 12.4963],
         title: "Thermen des Nero",
         date: "1. Jh. n. Chr.",
-        startValue: 0,
-        endValue: 100,
+        startValue: yearToDecimal(0),
+        endValue: yearToDecimal(100),
         text: "Frühe kaiserzeitliche Thermenanlage.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rome_Thermae.jpg/320px-Rome_Thermae.jpg",
         symbol: "thermen"
     },
     {
         coords: [41.89508, 12.47675],
-        title: "Katzenasyl Torre Argentina2",
+        title: "Katzenasyl Torre Argentina",
         date: "1980 – heute",
         startValue: yearToDecimal(1980),
-        endValue: new Date().getFullYear(),
+        endValue: yearToDecimal(new Date().getFullYear()),
         text: "Unsere Katzis.",
-       img: "https://github.com/Trimalcione/rom-bilder/blob/main/argentina.jpg?raw=true",
-        symbol: "kaiserzeit"
+        img: "https://github.com/Trimalcione/rom-bilder/blob/main/argentina.jpg?raw=true",
+        symbol: "sonstiges"
     },
     {
         coords: [41.8922, 12.4790],
         title: "Theater des Marcellus",
         date: "13 v. Chr. – heute",
         startValue: yearToDecimal(-13),
-        endValue: new Date().getFullYear(),
+        endValue: yearToDecimal(new Date().getFullYear()),
         text: "Theaterbau aus der späten Republik.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Teatro_di_Marcello_Roma.jpg/320px-Teatro_di_Marcello_Roma.jpg",
         symbol: "republik"
@@ -502,10 +504,10 @@ const points = [
         title: "Engelsburg",
         date: "139 n. Chr. – heute",
         startValue: yearToDecimal(139),
-        endValue: new Date().getFullYear(),
+        endValue: yearToDecimal(new Date().getFullYear()),
         text: "Mausoleum, später Festung und Papstresidenz.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
-        symbol: "sonstiges"
+        symbol: "kaiserzeit"
     }
 ];
 
@@ -696,6 +698,7 @@ map.on('click', function(e) {
 </script>
 </body>
 </html>
+
 
 
 
