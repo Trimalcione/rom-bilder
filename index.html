@@ -4,13 +4,15 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Rom – Historische Karte 2</title>
+    <title>Rom – Historische Karte 3</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"> 
-        <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-        
+    <!-- Leaflet CSS (stabiler CDN) -->
+    <link 
+        rel="stylesheet" 
+        href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+    >
+
     <style>
         body {
             margin: 0;
@@ -28,6 +30,7 @@
             margin-bottom: 6px;
         }
 
+        /* Slider unten mittig */
         #timeline {
             position: fixed;
             bottom: 20px;
@@ -36,16 +39,36 @@
             width: 60%;
             z-index: 1000;
         }
+
+        /* Jahresanzeige */
+        #yearDisplay {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.3);
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        /* Fix für Leaflet divIcons */
+        .custom-icon {
+            background: none !important;
+        }
     </style>
 </head>
 <body>
 
 <div id="map"></div>
 
+<div id="yearDisplay"></div>
 <input type="range" id="timeline" min="-700" max="2025" value="2025">
 
 <!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 // ------------------------------------------------------------
@@ -67,7 +90,7 @@ const iconBase = (color) => L.divIcon({
         border:2px solid white;
         box-shadow:0 0 4px rgba(0,0,0,0.4);
     "></div>`,
-    className: "",
+    className: "custom-icon",
     iconSize: [14, 14]
 });
 
@@ -196,17 +219,26 @@ function updateMarkers(currentYear) {
             `;
 
             marker.bindPopup(popupHTML);
+
+            // Hover-Effekte wieder aktiv
+            marker.on("mouseover", () => marker.openPopup());
+            marker.on("mouseout", () => marker.closePopup());
+
             marker.addTo(markerLayer);
         }
     });
 }
 
 // ------------------------------------------------------------
-// 6. Timeline
+// 6. Timeline + Jahresanzeige
 // ------------------------------------------------------------
 const timeline = document.getElementById("timeline");
+const yearDisplay = document.getElementById("yearDisplay");
+
+yearDisplay.textContent = timeline.value;
 
 timeline.addEventListener("input", () => {
+    yearDisplay.textContent = timeline.value;
     updateMarkers(parseInt(timeline.value));
 });
 
@@ -215,5 +247,3 @@ updateMarkers(parseInt(timeline.value));
 
 </body>
 </html>
-
-
