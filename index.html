@@ -51,8 +51,8 @@
     }
 
     .marker-icon img {
-        width: 32px;
-        height: 32px;
+        width: 48px;
+        height: 48px;
         transition: transform 0.2s ease, filter 0.2s ease;
     }
 
@@ -86,6 +86,7 @@
     <label><input type="checkbox" class="filter-symbol" value="foren" checked> Foren</label><br>
     <label><input type="checkbox" class="filter-symbol" value="kaiserzeit" checked> Kaiserzeit</label><br>
     <label><input type="checkbox" class="filter-symbol" value="republik" checked> Republik</label><br>
+    <label><input type="checkbox" class="filter-symbol" value="palazzo" checked> Palast</label><br>
     <label><input type="checkbox" class="filter-symbol" value="sonstiges" checked> Sonstiges</label><br>
 
     <h4>Mittelalter</h4>
@@ -411,8 +412,8 @@ function makeIcon(url) {
     return L.divIcon({
         className: "marker-icon",
         html: `<img src="${url}" alt="">`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
+        iconSize: [64, 64],
+        iconAnchor: [32, 32]
     });
 }
 
@@ -423,6 +424,7 @@ const icons = {
     foren: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
     kaiserzeit: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998592.png'),
     republik: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998584.png'),
+    palazzo: makeIcon('palazzo-gelb3.svg'),
     sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png'),
 
     // Neue Symbole
@@ -455,14 +457,14 @@ const points = [
          symbol: "foren"
     },
     {
-        coords: [41.89861, 12.47687],
-        title: "Pantheon",
-        date: "125 n. Chr. – heute",
-        startValue: yearToDecimal(125),
+        coords: [41.89843, 12.46726],
+        title: "Pallazzo Sforza Cesarini",
+        date: "1458 – heute",
+        startValue: yearToDecimal(1458),
         endValue: new Date().getFullYear(),
-        text: "Tempel für alle Götter.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/2024_Pantheon_Rome_04_2024_1318.jpg/960px-2024_Pantheon_Rome_04_2024_1318.jpg?20240605004451",
-        symbol: "tempel"
+        text: "Residenz Rodrigo Borgias als Kardinal und Vizekanzler (ab 1458).",
+        img: "https://upload.wikimedia.org/wikipedia/commons/6/6c/Pope_Alexander_Vi.jpg",
+        symbol: "palazzo"
     },
     {
         coords: [41.90278, 12.48062],
@@ -476,7 +478,7 @@ const points = [
     },
 
     {
-        coords: [41.89553, 12.47685],
+        coords: [41.89500, 12.47688],
         title: "Katzenasyl Torre Argentina",
         date: "1980 – heute",
         startValue: yearToDecimal(1980),
