@@ -1,6 +1,6 @@
 const points = [
     {
-        coords: [41.8902, 12.4922],
+        coords: [41.89021, 12.49223],
         title: "Kolosseum",
         date: "80 n. Chr. – heute",
         startValue: yearToDecimal(80),
@@ -10,67 +10,98 @@ const points = [
         symbol: "kaiserzeit"
     },
     {
-        coords: [41.8925, 12.4853],
+        coords: [41.89246, 12.48533],
         title: "Forum Romanum",
         date: "7.–5. Jh. v. Chr.",
         startValue: -700,
         endValue: -401,
         text: "Politisches Zentrum der frühen römischen Geschichte.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Forum_Romanum_Rome_Italy.jpg/320px-Forum_Romanum_Rome_Italy.jpg",
-        symbol: "foren"
+         img: "https://upload.wikimedia.org/wikipedia/commons/6/66/ForumRomana1.jpg",
+         symbol: "foren"
     },
     {
-        coords: [41.9031, 12.4958],
-        title: "Pantheon",
-        date: "125 n. Chr. – heute",
-        startValue: yearToDecimal(125),
+        coords: [41.89843, 12.46726],
+        title: "Palazzo Sforza Cesarini",
+        date: "1458 – 1491",
+        startValue: yearToDecimal(1458),
+        endValue: yearToDecimal(1491),
+        text: "Residenz Rodrigo Borgias als Kardinal und Vizekanzler (ab 1458).",
+        img: "https://upload.wikimedia.org/wikipedia/commons/6/6c/Pope_Alexander_Vi.jpg",
+        symbol: "palazzo"
+    },
+    {
+        coords: [41.89843, 12.46726],
+        title: "Palazzo Sforza Cesarini",
+        date: "1492 – 1503",
+        startValue: yearToDecimal(1492),
+        endValue: yearToDecimal(1505),
+        text: "Residenz Kardinal Ascanio Sforza (ab 1492).",
+        img: "hhttps://upload.wikimedia.org/wikipedia/commons/0/0a/SFORZA_ASCANIO.jpg",
+        symbol: "palazzo"
+    },
+    {
+        coords: [41.89843, 12.46726],
+        title: "Palazzo Sforza Cesarini",
+        date: "1503 – 1513",
+        startValue: yearToDecimal(1505),
+        endValue: yearToDecimal(1513),
+        text: "Residenz der Nepoten von Julius II Della Rovere; Francesco Maria I. della Rovere (ab 1505).",
+        img: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Young_Man_Apple.jpg",
+        symbol: "palazzo"
+    },
+    {
+        coords: [41.89843, 12.46726],
+        title: "Palazzo Sforza Cesarini",
+        date: "1513 – 1920",
+        startValue: yearToDecimal(1513),
+        endValue: yearToDecimal(1919),
+        text: "Residenz der Sforza-Cesarini (ab 1513).",
+        img: "https://ts1.mm.bing.net/th?id=OIP.83XdZggJbtcawdiKGyVTlQHaIn&pid=15.1",
+        symbol: "palazzo"
+    },
+    {
+        coords: [41.89843, 12.46726],
+        title: "Palazzo Sforza Cesarini",
+        date: "1920 – heute",
+        startValue: yearToDecimal(1920),
         endValue: new Date().getFullYear(),
-        text: "Tempel für alle Götter.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Pantheon_Rome_2020.jpg/320px-Pantheon_Rome_2020.jpg",
-        symbol: "tempel"
+        text: "staatlich (ab 1920).",
+        img: "https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg",
+        symbol: "palazzo"
     },
     {
-        coords: [41.9009, 12.4833],
+        coords: [41.90278, 12.48062],
         title: "Via del Corso",
         date: "1.–3. Jh. n. Chr.",
         startValue: 0,
         endValue: 300,
         text: "Wichtige Nord-Süd-Achse durch Rom.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Via_del_Corso_Rome.jpg/320px-Via_del_Corso_Rome.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Via_del_Corso_(52501354470).jpg/330px-Via_del_Corso_(52501354470).jpg",
         symbol: "strassen"
     },
+
     {
-        coords: [41.9010, 12.4963],
-        title: "Thermen des Nero",
-        date: "1. Jh. n. Chr.",
-        startValue: 0,
-        endValue: 100,
-        text: "Frühe kaiserzeitliche Thermenanlage.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rome_Thermae.jpg/320px-Rome_Thermae.jpg",
-        symbol: "thermen"
-    },
-    {
-        coords: [41.89508, 12.47675],
+        coords: [41.89500, 12.47688],
         title: "Katzenasyl Torre Argentina",
         date: "1980 – heute",
         startValue: yearToDecimal(1980),
         endValue: new Date().getFullYear(),
         text: "Unsere Katzis.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/320px-Colosseo_2020.jpg",
+        img: "https://raw.githubusercontent.com/Trimalcione/rom-bilder/refs/heads/main/argentina.jpg",
         symbol: "kaiserzeit"
     },
     {
-        coords: [41.8922, 12.4790],
+        coords: [41.89217, 12.47925],
         title: "Theater des Marcellus",
         date: "13 v. Chr. – heute",
         startValue: yearToDecimal(-13),
         endValue: new Date().getFullYear(),
         text: "Theaterbau aus der späten Republik.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Teatro_di_Marcello_Roma.jpg/320px-Teatro_di_Marcello_Roma.jpg",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Teatro_di_Marcello_intero.jpg/120px-Teatro_di_Marcello_intero.jpg",
         symbol: "republik"
     },
     {
-        coords: [41.8986, 12.4768],
+        coords: [41.90311, 12.46630],
         title: "Engelsburg",
         date: "139 n. Chr. – heute",
         startValue: yearToDecimal(139),
@@ -78,5 +109,71 @@ const points = [
         text: "Mausoleum, später Festung und Papstresidenz.",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
         symbol: "sonstiges"
+    }
+];
+
+// ------------------------------------------------------------
+// 7. Guelfen & Ghibellinen
+// ------------------------------------------------------------
+const guelfGhibPoints = [
+    {
+        coords: [41.88591, 12.50533],
+        title: "Lateran (Guelfen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Der Lateran war das wichtigste Zentrum der guelfischen, papsttreuen Macht.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Lateran_Basilica.jpg/320px-Lateran_Basilica.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.89396, 12.48287],
+        title: "Santa Maria in Aracoeli (Guelfen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Kirche und Machtzentrum der guelfischen Familien.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Santa_Maria_in_Aracoeli.jpg/320px-Santa_Maria_in_Aracoeli.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.91093, 12.47682],
+        title: "Piazza del Popolo (Guelfen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Guelfische Kontrolle über die nördlichen Stadttore.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Piazza_del_Popolo_Rome.jpg/320px-Piazza_del_Popolo_Rome.jpg",
+        symbol: "guelfen"
+    },
+    {
+        coords: [41.89250, 12.48231],
+        title: "Campidoglio (Ghibellinen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Sitz des römischen Senats – oft ghibellinisch dominiert.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Campidoglio_Rome.jpg/320px-Campidoglio_Rome.jpg",
+        symbol: "ghibellinen"
+    },
+    {
+        coords: [41.90311, 12.46630],
+        title: "Castel Sant’Angelo (Ghibellinen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Kaiserliche Garnison und strategischer Stützpunkt der Ghibellinen.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "ghibellinen"
+    },
+    {
+        coords: [41.89536, 12.48841],
+        title: "Torre delle Milizie (Ghibellinen)",
+        date: "Mittelalter",
+        startValue: yearToDecimal(1100),
+        endValue: yearToDecimal(1500),
+        text: "Der berühmte 'Schiefe Turm Roms', Sitz der ghibellinischen Frangipani.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Mercati_di_traiano%2C_torre_delle_milizie.JPG/640px-Mercati_di_traiano%2C_torre_delle_milizie.JPG",
+        symbol: "ghibellinen"
     }
 ];
