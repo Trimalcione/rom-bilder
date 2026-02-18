@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Layer Switcher unten Sidebar</title>
+<title>Interaktive Rom-Karte — Layer Switcher unten Sidebar 1</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -171,9 +171,11 @@ const icons = {
 };	
 
 // ------------------------------------------------------------
-// 6. Punkte
+// 6. Punkte (ALLE Marker integriert)
 // ------------------------------------------------------------
 const points = [
+
+    // --- Antike / Kaiserzeit / Republik ---
     {
         coords: [41.89021, 12.49223],
         title: "Kolosseum",
@@ -194,6 +196,50 @@ const points = [
         img: "https://upload.wikimedia.org/wikipedia/commons/6/66/ForumRomana1.jpg",
         symbol: "foren"
     },
+    {
+        coords: [41.89217, 12.47925],
+        title: "Theater des Marcellus",
+        date: "13 v. Chr. – heute",
+        startValue: yearToDecimal(-13),
+        endValue: new Date().getFullYear(),
+        text: "Theaterbau aus der späten Republik.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Teatro_di_Marcello_intero.jpg/120px-Teatro_di_Marcello_intero.jpg",
+        symbol: "republik"
+    },
+    {
+        coords: [41.90311, 12.46630],
+        title: "Engelsburg",
+        date: "139 n. Chr. – heute",
+        startValue: yearToDecimal(139),
+        endValue: new Date().getFullYear(),
+        text: "Mausoleum, später Festung und Papstresidenz.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
+        symbol: "sonstiges"
+    },
+    {
+        coords: [41.90278, 12.48062],
+        title: "Via del Corso",
+        date: "1.–3. Jh. n. Chr.",
+        startValue: 0,
+        endValue: 300,
+        text: "Wichtige Nord-Süd-Achse durch Rom.",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Via_del_Corso_(52501354470).jpg/330px-Via_del_Corso_(52501354470).jpg",
+        symbol: "strassen"
+    },
+
+    // --- Moderne ---
+    {
+        coords: [41.89500, 12.47688],
+        title: "Katzenasyl Torre Argentina",
+        date: "1980 – heute",
+        startValue: yearToDecimal(1980),
+        endValue: new Date().getFullYear(),
+        text: "Unsere Katzis.",
+        img: "https://raw.githubusercontent.com/Trimalcione/rom-bilder/refs/heads/main/argentina.jpg",
+        symbol: "kaiserzeit"
+    },
+
+    // --- Palazzo Sforza Cesarini (mehrere Epochen) ---
     {
         coords: [41.89843, 12.46726],
         title: "Palazzo Sforza Cesarini",
@@ -244,52 +290,8 @@ const points = [
         img: "https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg",
         symbol: "palazzo"
     },
-    {
-        coords: [41.90278, 12.48062],
-        title: "Via del Corso",
-        date: "1.–3. Jh. n. Chr.",
-        startValue: 0,
-        endValue: 300,
-        text: "Wichtige Nord-Süd-Achse durch Rom.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Via_del_Corso_(52501354470).jpg/330px-Via_del_Corso_(52501354470).jpg",
-        symbol: "strassen"
-    },
-    {
-        coords: [41.89500, 12.47688],
-        title: "Katzenasyl Torre Argentina",
-        date: "1980 – heute",
-        startValue: yearToDecimal(1980),
-        endValue: new Date().getFullYear(),
-        text: "Unsere Katzis.",
-        img: "https://raw.githubusercontent.com/Trimalcione/rom-bilder/refs/heads/main/argentina.jpg",
-        symbol: "kaiserzeit"
-    },
-    {
-        coords: [41.89217, 12.47925],
-        title: "Theater des Marcellus",
-        date: "13 v. Chr. – heute",
-        startValue: yearToDecimal(-13),
-        endValue: new Date().getFullYear(),
-        text: "Theaterbau aus der späten Republik.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Teatro_di_Marcello_intero.jpg/120px-Teatro_di_Marcello_intero.jpg",
-        symbol: "republik"
-    },
-    {
-        coords: [41.90311, 12.46630],
-        title: "Engelsburg",
-        date: "139 n. Chr. – heute",
-        startValue: yearToDecimal(139),
-        endValue: new Date().getFullYear(),
-        text: "Mausoleum, später Festung und Papstresidenz.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Castel_Sant%27Angelo_Rome.jpg/320px-Castel_Sant%27Angelo_Rome.jpg",
-        symbol: "sonstiges"
-    }
-];
 
-// ------------------------------------------------------------
-// 7. Guelfen & Ghibellinen
-// ------------------------------------------------------------
-const guelfGhibPoints = [
+    // --- Guelfen ---
     {
         coords: [41.88591, 12.50533],
         title: "Lateran (Guelfen)",
@@ -320,6 +322,8 @@ const guelfGhibPoints = [
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Piazza_del_Popolo_Rome.jpg/320px-Piazza_del_Popolo_Rome.jpg",
         symbol: "guelfen"
     },
+
+    // --- Ghibellinen ---
     {
         coords: [41.89250, 12.48231],
         title: "Campidoglio (Ghibellinen)",
@@ -352,7 +356,6 @@ const guelfGhibPoints = [
     }
 ];
 
-guelfGhibPoints.forEach(p => points.push(p));
 
 // ------------------------------------------------------------
 // 8. Marker erzeugen
@@ -465,4 +468,5 @@ map.on('click', function(e) {
 </script>
 </body>
 </html>
+
 
