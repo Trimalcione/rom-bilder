@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Layer Switcher unten Sidebar 2</title>
+<title>Interaktive Rom-Karte — Layer Switcher unten Sidebar 3</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -405,26 +405,45 @@ points.forEach(p => {
     });
 });
 
+
+
+
+
 // ------------------------------------------------------------
-// 9. Slider
+// 9. Slider (kompakt: 800–1600 + heute)
 // ------------------------------------------------------------
 function initSlider() {
     const slider = document.getElementById("time-slider");
 
-    slider.min = 0;
-    slider.max = new Date().getFullYear();
-    slider.value = slider.max;
+    // künstliche Skala:
+    // 800–1600 = echte Jahre
+    // 1601 = "heute"
+    slider.min = 800;
+    slider.max = 1601;
+    slider.value = 1601;
 
-    document.getElementById("slider-label").textContent = "Jahr: " + slider.value;
+    document.getElementById("slider-label").textContent = "Jahr: heute";
 }
 
 initSlider();
 
 function applySlider() {
-    const year = parseFloat(document.getElementById("time-slider").value);
+    const slider = document.getElementById("time-slider");
+    const currentYear = new Date().getFullYear();
+    let val = parseInt(slider.value);
 
-    document.getElementById("slider-label").textContent = `Jahr: ${year}`;
+    let year;
 
+    // 1601 steht für "heute"
+    if (val === 1601) {
+        year = currentYear;
+        document.getElementById("slider-label").textContent = "Jahr: heute";
+    } else {
+        year = val;
+        document.getElementById("slider-label").textContent = `Jahr: ${year}`;
+    }
+
+    // Marker filtern
     markers.forEach(obj => {
         const visible = obj.startValue <= year && obj.endValue >= year;
 
@@ -437,7 +456,7 @@ function applySlider() {
 }
 
 document.getElementById("time-slider")
-     .addEventListener("input", applySlider);
+    .addEventListener("input", applySlider);
 
 // ------------------------------------------------------------
 // 10. Admin-Modus
