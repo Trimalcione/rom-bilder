@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Layer Switcher unten Sidebar 3</title>
+<title>Interaktive Rom-Karte — Layer Switcher unten Sidebar</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -13,7 +11,7 @@
         margin: 0;
         font-family: Arial, sans-serif;
         display: flex;
-        flex-direction: column;   /* WICHTIG: vertikale Anordnung */
+        flex-direction: column;
         height: 100vh;
     }
 
@@ -75,20 +73,27 @@
 <body>
 
 <div id="map">
-    <div id="coords-display">Koordinaten: –</div>
+    <div id="coords-display">Koordinaten: –</div>
 </div>
 
 <div id="sidebar">
 
-    <h4>Zeitleiste</h4>
-    <input type="range" id="time-slider" min="" max="" value="" step="1" style="width:100%;">
-    <div id="slider-label"></div>
+    <h4>Zeitleiste</h4>
+    <input type="range" id="time-slider" min="" max="" value="" step="1" style="width:100%;">
+    <div id="slider-label"></div>
+<div style="margin-top:12px;">
+    <a href="https://trimalcione.github.io/antikes-Rom/" 
+       target="_blank" 
+       style="font-weight:bold; text-decoration:none; color:#0044aa;">
+       ➜ zum antiken Rom
+    </a>
+</div>
 
-    <h4>Admin</h4>
-    <label>
-        <input type="checkbox" id="admin-mode">
-        Admin-Modus aktivieren
-    </label>
+    <h4>Admin</h4>
+    <label>
+        <input type="checkbox" id="admin-mode">
+        Admin-Modus aktivieren
+    </label>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -102,21 +107,21 @@ const map = L.map('map').setView([41.8933, 12.4829], 15);
 // 2. Basemaps
 // ------------------------------------------------------------
 const baseVoyager = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-    {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap-Mitwirkende &copy; CARTO'
-    }
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+    {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap-Mitwirkende &copy; CARTO'
+    }
 );
 
 
 
 const baseOSM = L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap-Mitwirkende'
-    }
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap-Mitwirkende'
+    }
 );
 
 // Standard-Basemap aktivieren
@@ -124,11 +129,26 @@ baseVoyager.addTo(map);
 
 // Layer-Switcher
 const baseMaps = {
-    "Carto Voyager": baseVoyager,
-    "OpenStreetMap": baseOSM
+    "Carto Voyager": baseVoyager,
+    "OpenStreetMap": baseOSM
 };
 
 L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
+
+
+
+// ------------------------------------------------------------
+// 10. Beim Wechsel auf OpenStreetMap → Slider auf "heute"
+// ------------------------------------------------------------
+map.on('baselayerchange', function(e) {
+    const slider = document.getElementById("time-slider");
+    const currentYear = new Date().getFullYear();
+
+    if (e.name === "OpenStreetMap") {
+        slider.value = 1601;   // unser "heute"-Marker
+        applySlider();
+    }
+});
 
 // ------------------------------------------------------------
 // 3. Koordinatenanzeige
@@ -136,41 +156,41 @@ L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
 const coordsDisplay = document.getElementById('coords-display');
 
 map.on('mousemove', e => {
-    coordsDisplay.textContent =
-        `Koordinaten: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+    coordsDisplay.textContent =
+        `Koordinaten: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
 });
 
 // ------------------------------------------------------------
 // 4. Zeitfunktion
 // ------------------------------------------------------------
 function yearToDecimal(year, month = 1, day = 1) {
-    return year + (month - 1) / 12 + (day - 1) / 365;
+    return year + (month - 1) / 12 + (day - 1) / 365;
 }
 
 // ------------------------------------------------------------
 // 5. Icons
 // ------------------------------------------------------------
 function makeIcon(url) {
-    return L.divIcon({
-        className: "marker-icon",
-        html: `<img src="${url}" alt="">`,
-        iconSize: [64, 64],
-        iconAnchor: [32, 32]
-    });
+    return L.divIcon({
+        className: "marker-icon",
+        html: `<img src="${url}" alt="">`,
+        iconSize: [64, 64],
+        iconAnchor: [32, 32]
+    });
 }
 
-const icons = {	
- 	tempel: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
- 	thermen: makeIcon('https://cdn-icons-png.flaticon.com/512/854/854878.png'),
- 	strassen: makeIcon('https://cdn-icons-png.flaticon.com/512/684/684908.png'),
- 	foren: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
- 	kaiserzeit: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998592.png'),
- 	republik: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998584.png'),
- 	sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png'),
- 	guelfen: makeIcon('https://openmoji.org/data/color/svg/1F981.svg'),
- 	ghibellinen: makeIcon('https://openmoji.org/data/color/svg/1F985.svg'),
- 	palazzo: makeIcon('Palazzo-gelb3.svg')
-};	
+const icons = { 
+    tempel: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
+    thermen: makeIcon('https://cdn-icons-png.flaticon.com/512/854/854878.png'),
+    strassen: makeIcon('https://cdn-icons-png.flaticon.com/512/684/684908.png'),
+    foren: makeIcon('https://cdn-icons-png.flaticon.com/512/3176/3176298.png'),
+    kaiserzeit: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998592.png'),
+    republik: makeIcon('https://cdn-icons-png.flaticon.com/512/1998/1998584.png'),
+    sonstiges: makeIcon('https://cdn-icons-png.flaticon.com/512/1828/1828884.png'),
+    guelfen: makeIcon('https://openmoji.org/data/color/svg/1F981.svg'),
+    ghibellinen: makeIcon('https://openmoji.org/data/color/svg/1F985.svg'),
+    palazzo: makeIcon('Palazzo-gelb3.svg')
+};  
 
 
 
@@ -368,41 +388,41 @@ const points = [
 let markers = [];
 
 points.forEach(p => {
-    const marker = L.marker(p.coords, { icon: icons[p.symbol] });
+    const marker = L.marker(p.coords, { icon: icons[p.symbol] });
 
-    const box = `
-        <div class="info-box">
-            <div class="info-title">${p.title}</div>
-            <div class="info-date">${p.date}</div>
-            <img src="${p.img}" width="200"><br>
-            ${p.text}
-        </div>
-    `;
+    const box = `
+        <div class="info-box">
+            <div class="info-title">${p.title}</div>
+            <div class="info-date">${p.date}</div>
+            <img src="${p.img}" width="200"><br>
+            ${p.text}
+        </div>
+    `;
 
-    marker.bindPopup(box);
+    marker.bindPopup(box);
 
-    const hoverBox = `
-        <div style="pointer-events:none;">
-            <img src="${p.img}" style="width:140px; border-radius:4px;">
-        </div>
-    `;
+    const hoverBox = `
+        <div style="pointer-events:none;">
+            <img src="${p.img}" style="width:140px; border-radius:4px;">
+        </div>
+    `;
 
-    marker.bindTooltip(hoverBox, {
-        permanent: false,
-        direction: "top",
-        offset: [0, -20],
-        opacity: 0.95,
-        className: "hover-popup"
-    });
+    marker.bindTooltip(hoverBox, {
+        permanent: false,
+        direction: "top",
+        offset: [0, -20],
+        opacity: 0.95,
+        className: "hover-popup"
+    });
 
-    marker.addTo(map);
+    marker.addTo(map);
 
-    markers.push({
-        marker,
-        symbol: p.symbol,
-        startValue: p.startValue,
-        endValue: p.endValue
-    });
+    markers.push({
+        marker,
+        symbol: p.symbol,
+        startValue: p.startValue,
+        endValue: p.endValue
+    });
 });
 
 
@@ -413,50 +433,50 @@ points.forEach(p => {
 // 9. Slider (kompakt: 800–1600 + heute)
 // ------------------------------------------------------------
 function initSlider() {
-    const slider = document.getElementById("time-slider");
+    const slider = document.getElementById("time-slider");
 
-    // künstliche Skala:
-    // 800–1600 = echte Jahre
-    // 1601 = "heute"
-    slider.min = 800;
-    slider.max = 1601;
-    slider.value = 1601;
+    // künstliche Skala:
+    // 800–1600 = echte Jahre
+    // 1601 = "heute"
+    slider.min = 800;
+    slider.max = 1601;
+    slider.value = 1601;
 
-    document.getElementById("slider-label").textContent = "Jahr: heute";
+    document.getElementById("slider-label").textContent = "Jahr: heute";
 }
 
 initSlider();
 
 function applySlider() {
-    const slider = document.getElementById("time-slider");
-    const currentYear = new Date().getFullYear();
-    let val = parseInt(slider.value);
+    const slider = document.getElementById("time-slider");
+    const currentYear = new Date().getFullYear();
+    let val = parseInt(slider.value);
 
-    let year;
+    let year;
 
-    // 1601 steht für "heute"
-    if (val === 1601) {
-        year = currentYear;
-        document.getElementById("slider-label").textContent = "Jahr: heute";
-    } else {
-        year = val;
-        document.getElementById("slider-label").textContent = `Jahr: ${year}`;
-    }
+    // 1601 steht für "heute"
+    if (val === 1601) {
+        year = currentYear;
+        document.getElementById("slider-label").textContent = "Jahr: heute";
+    } else {
+        year = val;
+        document.getElementById("slider-label").textContent = `Jahr: ${year}`;
+    }
 
-    // Marker filtern
-    markers.forEach(obj => {
-        const visible = obj.startValue <= year && obj.endValue >= year;
+    // Marker filtern
+    markers.forEach(obj => {
+        const visible = obj.startValue <= year && obj.endValue >= year;
 
-        if (visible) {
-            if (!map.hasLayer(obj.marker)) obj.marker.addTo(map);
-        } else {
-            if (map.hasLayer(obj.marker)) map.removeLayer(obj.marker);
-        }
-    });
+        if (visible) {
+            if (!map.hasLayer(obj.marker)) obj.marker.addTo(map);
+        } else {
+            if (map.hasLayer(obj.marker)) map.removeLayer(obj.marker);
+        }
+    });
 }
 
 document.getElementById("time-slider")
-    .addEventListener("input", applySlider);
+    .addEventListener("input", applySlider);
 
 // ------------------------------------------------------------
 // 10. Admin-Modus
@@ -464,30 +484,30 @@ document.getElementById("time-slider")
 const adminToggle = document.getElementById('admin-mode');
 
 map.on('click', function(e) {
-    if (!adminToggle.checked) return;
+    if (!adminToggle.checked) return;
 
-    const lat = e.latlng.lat.toFixed(5);
-    const lng = e.latlng.lng.toFixed(5);
+    const lat = e.latlng.lat.toFixed(5);
+    const lng = e.latlng.lng.toFixed(5);
 
-    const example = `
+    const example = `
 {
-    coords: [${lat}, ${lng}],
-    title: "NEUER TITEL",
-    date: "DATUM / ZEITSPANNE",
-    startValue: yearToDecimal(1980),
-    endValue: new Date().getFullYear(),
-    text: "Freitext.",
-    img: "BILD-URL",
-    symbol: "tempel"
+    coords: [${lat}, ${lng}],
+    title: "NEUER TITEL",
+    date: "DATUM / ZEITSPANNE",
+    startValue: yearToDecimal(1980),
+    endValue: new Date().getFullYear(),
+    text: "Freitext.",
+    img: "BILD-URL",
+    symbol: "tempel"
 }
-    `.trim();
+    `.trim();
 
-    L.marker([lat, lng]).addTo(map)
-        .bindPopup(
-            "<b>Neuer Marker gesetzt</b><br><br>" +
-            `<textarea style='width:100%;height:220px;'>${example}</textarea>`
-        )
-        .openPopup();
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(
+            "<b>Neuer Marker gesetzt</b><br><br>" +
+            `<textarea style='width:100%;height:220px;'>${example}</textarea>`
+        )
+        .openPopup();
 });
 </script>
 </body>
