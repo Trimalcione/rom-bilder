@@ -88,6 +88,13 @@
        ➜ zum mittelalterlichen Rom
     </a>
 </div>
+<div style="margin-top:12px;">
+    <a href="https://trimalcione.github.io/antikes-Rom/" 
+       target="_blank" 
+       style="font-weight:bold; text-decoration:none; color:#0044aa;">
+       ➜ zum antiken Rom
+    </a>
+</div>
 
     <h4>Admin</h4>
     <label>
@@ -436,11 +443,11 @@ function initSlider() {
     const slider = document.getElementById("time-slider");
 
     // künstliche Skala:
-    // 800–1600 = echte Jahre
+    // 1200–1600 = echte Jahre
     // 1601 = "heute"
     slider.min = 1200;
     slider.max = 1601;
-    slider.value = 1201;
+    slider.value = 1601;
 
     document.getElementById("slider-label").textContent = "Jahr: heute";
 }
@@ -455,7 +462,7 @@ function applySlider() {
     let year;
 
     // 1601 steht für "heute"
-    if (val === 1201) {
+    if (val === 1601) {
         year = currentYear;
         document.getElementById("slider-label").textContent = "Jahr: heute";
     } else {
@@ -512,6 +519,3 @@ map.on('click', function(e) {
 </script>
 </body>
 </html>
-
-
-
