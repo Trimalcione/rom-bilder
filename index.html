@@ -105,49 +105,47 @@
 
 <div id="sidebar">
 
-<h4>Zeitleisten</h4>
+<h4>Zeitleiste</h4>
 
-<div class="timeline-group">
+<div id="slider-label" style="
+    margin-top:10px;
+    font-weight:bold;
+    color:#ff0000;
+    font-size:16px;">
+</div>
+<br>
+<div class="ti">
     <label>
         <input type="radio" name="sliderSelect" value="antike" checked>
         Antike (–700 bis 500)
     </label>
-    <input type="range" id="slider-antike" min="-700" max="500" value="500" step="1" class="timeline-slider">
+    <input type="range" id="slider-antike" min="-700" max="500" value="500" step="1" style="width:100%;">
 </div>
 
-<div class="timeline-group">
+<div class="ti">
     <label>
         <input type="radio" name="sliderSelect" value="mittelalter">
         Mittelalter (500 bis 1500)
     </label>
-    <input type="range" id="slider-mittelalter" min="500" max="1500" value="1500" step="1" class="timeline-slider">
+    <input type="range" id="slider-mittelalter" min="500" max="1500" value="1500" step="1" style="width:100%;">
 </div>
 
-<div class="timeline-group">
+<div class="ti">
     <label>
         <input type="radio" name="sliderSelect" value="neuzeit">
         Neuzeit (1500 bis heute)
     </label>
-    <input type="range" id="slider-neuzeit" min="1500" max="1601" value="1601" step="1" class="timeline-slider">
+    <input type="range" id="slider-neuzeit" min="1500" max="1601" value="1601" step="1" style="width:100%;">
 </div>
-
-<div id="slider-label"></div>
 
 <button id="show-all" style="
     margin-top:10px;
     padding:6px 10px;
     font-size:14px;
     font-weight:bold;
-    cursor:pointer;
-">
+    cursor:pointer;">
     Alles anzeigen
 </button>
-
-
-
-
-
-
 
 
 
@@ -547,7 +545,7 @@ document.querySelectorAll('input[name="sliderSelect"]').forEach(r => {
 
 function showAllMarkers() {
     // Label setzen
-    document.getElementById("slider-label").textContent = "Alle Marker sichtbar";
+    document.getElementById("slider-label").textContent = "Alle Jahre";
 
     // Alle Marker einblenden
     markers.forEach(obj => {
