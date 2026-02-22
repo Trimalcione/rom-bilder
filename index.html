@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interaktive Rom-Karte — Spätmittelalter und Renaissance</title>
+<title>Interaktive Rom-Karte </title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <style>
@@ -49,16 +49,16 @@
         width: 240px;
     }
 
-    .marker-icon img {
-        width: 48px;
-        height: 48px;
-        transition: transform 0.2s ease, filter 0.2s ease;
-    }
+.marker-icon img {
+    width: 40px;
+    height:40px;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
 
-    .marker-icon img:hover {
-        transform: scale(1.35);
-        filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
-    }
+.marker-icon img:hover {
+    transform: scale(1.45);
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+}
 
     .leaflet-tooltip.hover-popup {
         background: white;
@@ -67,6 +67,33 @@
         padding: 4px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+
+.timeline-group {
+    margin-bottom: 14px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.timeline-group label {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.timeline-slider {
+    width: 100%;
+    margin-top: 4px;
+}
+
+#slider-label {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
 </style>
 </head>
 
@@ -78,23 +105,51 @@
 
 <div id="sidebar">
 
-    <h4>Zeitleiste 1200 - 1600</h4>
-    <input type="range" id="time-slider" min="" max="" value="" step="1" style="width:100%;">
-    <div id="slider-label"></div>
-<div style="margin-top:12px;">
-    <a href="https://trimalcione.github.io/Mittelalter-Rom/" 
-       target="_blank" 
-       style="font-weight:bold; text-decoration:none; color:#0044aa;">
-       ➜ zum mittelalterlichen Rom
-    </a>
+<h4>Zeitleisten</h4>
+
+<div class="timeline-group">
+    <label>
+        <input type="radio" name="sliderSelect" value="antike" checked>
+        Antike (–700 bis 500)
+    </label>
+    <input type="range" id="slider-antike" min="-700" max="500" value="500" step="1" class="timeline-slider">
 </div>
-<div style="margin-top:12px;">
-    <a href="https://trimalcione.github.io/antikes-Rom/" 
-       target="_blank" 
-       style="font-weight:bold; text-decoration:none; color:#0044aa;">
-       ➜ zum antiken Rom
-    </a>
+
+<div class="timeline-group">
+    <label>
+        <input type="radio" name="sliderSelect" value="mittelalter">
+        Mittelalter (500 bis 1500)
+    </label>
+    <input type="range" id="slider-mittelalter" min="500" max="1500" value="1500" step="1" class="timeline-slider">
 </div>
+
+<div class="timeline-group">
+    <label>
+        <input type="radio" name="sliderSelect" value="neuzeit">
+        Neuzeit (1500 bis heute)
+    </label>
+    <input type="range" id="slider-neuzeit" min="1500" max="1601" value="1601" step="1" class="timeline-slider">
+</div>
+
+<div id="slider-label"></div>
+
+<button id="show-all" style="
+    margin-top:10px;
+    padding:6px 10px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+">
+    Alles anzeigen
+</button>
+
+
+
+
+
+
+
+
 
     <h4>Admin</h4>
     <label>
@@ -145,7 +200,7 @@ L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
 
 
 // ------------------------------------------------------------
-// 10. Beim Wechsel auf OpenStreetMap → Slider auf "heute"
+// 2b  Beim Wechsel auf OpenStreetMap → Slider auf "heute"
 // ------------------------------------------------------------
 map.on('baselayerchange', function(e) {
     const slider = document.getElementById("time-slider");
@@ -181,8 +236,8 @@ function makeIcon(url) {
     return L.divIcon({
         className: "marker-icon",
         html: `<img src="${url}" alt="">`,
-        iconSize: [64, 64],
-        iconAnchor: [32, 32]
+        iconSize: [48, 48],
+        iconAnchor: [24, 24]
     });
 }
 
@@ -437,56 +492,89 @@ points.forEach(p => {
 
 
 // ------------------------------------------------------------
-// 9. Slider (kompakt: 1200–1600 + heute)
+// 9. Slider (Antike / Mittelalter / Neuzeit + heute)
 // ------------------------------------------------------------
-function initSlider() {
-    const slider = document.getElementById("time-slider");
 
-    // künstliche Skala:
-    // 1200–1600 = echte Jahre
-    // 1601 = "heute"
-    slider.min = 1200;
-    slider.max = 1601;
-    slider.value = 1601;
+// Aktiven Slider auslesen
+function getActiveSliderValue() {
+    const selected = document.querySelector('input[name="sliderSelect"]:checked').value;
+    const currentYear = new Date().getFullYear();
 
-    document.getElementById("slider-label").textContent = "Jahr: heute";
+    if (selected === "antike") {
+        return parseInt(document.getElementById("slider-antike").value);
+    }
+
+    if (selected === "mittelalter") {
+        return parseInt(document.getElementById("slider-mittelalter").value);
+    }
+
+    if (selected === "neuzeit") {
+        const v = parseInt(document.getElementById("slider-neuzeit").value);
+        return v === 1601 ? currentYear : v;   // 1601 = heute
+    }
 }
 
-initSlider();
-
+// Hauptfunktion: Marker filtern
 function applySlider() {
-    const slider = document.getElementById("time-slider");
-    const currentYear = new Date().getFullYear();
-    let val = parseInt(slider.value);
+    const year = getActiveSliderValue();
+    const currentYear = new Date().getFullYear();
 
-    let year;
+    // Label aktualisieren
+    document.getElementById("slider-label").textContent =
+        year === currentYear ? "Jahr: heute" : `Jahr: ${year}`;
 
-    // 1601 steht für "heute"
-    if (val === 1601) {
-        year = currentYear;
-        document.getElementById("slider-label").textContent = "Jahr: heute";
-    } else {
-        year = val;
-        document.getElementById("slider-label").textContent = `Jahr: ${year}`;
-    }
+    // Marker filtern (nur EINMAL!)
+    markers.forEach(obj => {
+        const visible = obj.startValue <= year && obj.endValue >= year;
 
-    // Marker filtern
-    markers.forEach(obj => {
-        const visible = obj.startValue <= year && obj.endValue >= year;
-
-        if (visible) {
-            if (!map.hasLayer(obj.marker)) obj.marker.addTo(map);
-        } else {
-            if (map.hasLayer(obj.marker)) map.removeLayer(obj.marker);
-        }
-    });
+        if (visible) {
+            if (!map.hasLayer(obj.marker)) obj.marker.addTo(map);
+        } else {
+            if (map.hasLayer(obj.marker)) map.removeLayer(obj.marker);
+        }
+    });
 }
 
-document.getElementById("time-slider")
-    .addEventListener("input", applySlider);
+// Events für alle Slider
+document.getElementById("slider-antike").addEventListener("input", applySlider);
+document.getElementById("slider-mittelalter").addEventListener("input", applySlider);
+document.getElementById("slider-neuzeit").addEventListener("input", applySlider);
 
-// ------------------------------------------------------------
-// 10. Admin-Modus
+// Radiobuttons (welcher Slider aktiv?)
+document.querySelectorAll('input[name="sliderSelect"]').forEach(r => {
+    r.addEventListener("change", applySlider);
+});
+
+function showAllMarkers() {
+    // Label setzen
+    document.getElementById("slider-label").textContent = "Alle Marker sichtbar";
+
+    // Alle Marker einblenden
+    markers.forEach(obj => {
+        if (!map.hasLayer(obj.marker)) {
+            obj.marker.addTo(map);
+        }
+    });
+}
+
+document.getElementById("show-all").addEventListener("click", showAllMarkers);
+
+// Wenn ein Slider bewegt wird, automatisch den passenden Radiobutton aktivieren
+document.getElementById("slider-antike").addEventListener("input", () => {
+    document.querySelector('input[value="antike"]').checked = true;
+    applySlider();
+});
+
+document.getElementById("slider-mittelalter").addEventListener("input", () => {
+    document.querySelector('input[value="mittelalter"]').checked = true;
+    applySlider();
+});
+
+document.getElementById("slider-neuzeit").addEventListener("input", () => {
+    document.querySelector('input[value="neuzeit"]').checked = true;
+    applySlider();
+});
+
 // ------------------------------------------------------------
 const adminToggle = document.getElementById('admin-mode');
 
